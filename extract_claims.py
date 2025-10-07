@@ -15,7 +15,7 @@ for filename in os.listdir(folder_path):
             for line in f:
                 try:
                     tweet = json.loads(line.strip())
-                    # Check if tweet has both eng and langs
+                    # Check that tweet has text and that "eng" is in langs list
                     if "text" in tweet and "langs" in tweet and "eng" in tweet["langs"]:
                         all_tweets.append(tweet["text"])
                 except json.JSONDecodeError:
@@ -47,5 +47,4 @@ with open(output_file, "w", encoding="utf-8") as f:
     for claim in claims:
         f.write(claim + "\n")
 
-print(f"📝 Saved English claim-like tweets to: {output_file}")
-
+print(f"📝 Saved English claim-like tweets to: {output_file}") 
