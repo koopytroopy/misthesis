@@ -56,7 +56,7 @@ claims = [
 print(f"💬 Found {len(claims)} potential factual claims (English only).")
 
 # ---- 5. Save all claim-like tweets to CSV (filename + post_id + text) ----
-output_file = os.path.join(folder_path, "potential_claims_english.csv")
+output_file = os.path.join(folder_path, "potential_claims_english_with_IDandTrace.csv")
 
 with open(output_file, "w", encoding="utf-8", newline="") as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=["filename", "post_id", "text"])
