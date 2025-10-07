@@ -16,7 +16,7 @@ for filename in os.listdir(folder_path):
                 try:
                     tweet = json.loads(line.strip())
                     # Check if tweet has both text and language fields
-                    if tweet.get("lang") == "en" and "text" in tweet:
+                    if tweet.get("lang") == "eng" and "text" in tweet:
                         all_tweets.append(tweet["text"])
                 except json.JSONDecodeError:
                     print(f"⚠️ Skipping invalid line in {filename}")
