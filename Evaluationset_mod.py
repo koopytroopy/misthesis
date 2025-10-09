@@ -8,27 +8,26 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
-print("Thesis-Grade Misinformation Testing - Simplified Version")
+print("Thesis Misinformation Testing")
 print(f"Experiment started: {datetime.now()}")
 
 # Configuration
 CONFIG = {
-    "ugc_file": "../data/ugc_master.csv",
-    "ngc_file": "../data/ngc_master.csv", 
-    "model_name": "llama-3.2-3b-instruct",
+    "ugc_file": "../data/ugc_master.csv", # Correct path
+    "ngc_file": "../data/ngc_master.csv", # Correct path
+    "model_name": "llama-3.2-3b-instruct", # Change for new
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,  # Multiple runs for statistical reliability
     "random_seeds": [42, 123, 456, 789, 999]
 }
 
-class SimpleThesisEvaluator:
+class ThesisEvaluator:
     def __init__(self, config):
         self.config = config
         self.all_results = []
         self.run_data_storage = {}  # Store detailed run data for analysis
         
     def generate_prompt(self, claim, domain):
-        """Simple working prompt based on your successful version"""
         return f"""You are a fact-checking assistant reviewing a claim about {domain}.
 Based on the content, your task is to determine whether the claim(s) are factually accurate or contain misinformation.
 
@@ -371,11 +370,11 @@ Answer:"""
         
         print(f"Successfully classified {len(df_clean)}/{len(results_df)} test claims")
         
-        # Print results in your preferred format
+        # Print results in preferred format
         self.print_overall_results(df_clean, f"{dataset_name} Run {run_id + 1}")
         self.print_domain_results(df_clean, f"{dataset_name} Run {run_id + 1}")
         
-        # Calculate metrics for statistical tracking
+        # Calculate metrics 
         y_true = df_clean['label']
         
         # Model metrics
@@ -682,5 +681,5 @@ Answer:"""
 
 # Main execution
 if __name__ == "__main__":
-    evaluator = SimpleThesisEvaluator(CONFIG)
+    evaluator = ThesisEvaluator(CONFIG)
     results = evaluator.run_complete_evaluation()
