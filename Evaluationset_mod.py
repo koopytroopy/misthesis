@@ -79,30 +79,137 @@ Answer:"""
         except Exception as e:
             return None
     
-    def generate_baseline_predictions(self, df, method='random'):
-        """Generate baseline predictions for comparison with NaN protection"""
+    def create_stratified_split(self, df, test_size=0.3, random_state=42):
+        """
+        Create stratified train/test split balanced by both domain and label
+        Ensures test set has representative samples from each domain-label combination
+        """
+        from sklearn.model_selection import train_test_split
+        
+        # Create a combined stratification column (domain + label)
+        df = df.copy()
+        df['stratify_col'] = df['domain'].astype(str) + '_' + df['label'].astype(str)
+        
+        # Check distribution before split
+        print(f"\nDataset Distribution Before Split:")
+        print(df.groupby(['domain', 'label']).size().unstack(fill_value=0))
+        print(f"\nTotal samples: {len(df)}")
+        
+        try:
+            # Stratified split by domain AND label
+            train_df, test_df = train_test_split(
+                df, 
+                test_size=test_size, 
+                random_state=random_state,
+                stratify=df['stratify_col']
+            )
+            
+            # Remove temporary column
+            train_df = train_df.drop('stratify_col', axis=1)
+            test_df = test_df.drop('stratify_col', axis=1)
+            
+            # Print split statistics
+            print(f"\nTrain Set ({len(train_df)} samples, {len(train_df)/len(df)*100:.1f}%):")
+            print(train_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
+            
+            print(f"\nTest Set ({len(test_df)} samples, {len(test_df)/len(df)*100:.1f}%):")
+            print(test_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
+            
+            # Verify balance
+            print(f"\nClass Balance in Train Set:")
+            train_class_dist = train_df['label'].value_counts(normalize=True)
+            for label, pct in train_class_dist.items():
+                print(f"  Label {label}: {pct*100:.1f}%")
+            
+            print(f"\nClass Balance in Test Set:")
+            test_class_dist = test_df['label'].value_counts(normalize=True)
+            for label, pct in test_class_dist.items():
+                print(f"  Label {label}: {pct*100:.1f}%")
+            
+            print(f"\nDomain Balance in Train Set:")
+            train_domain_dist = train_df['domain'].value_counts(normalize=True)
+            for domain, pct in train_domain_dist.items():
+                print(f"  {domain}: {pct*100:.1f}%")
+            
+            print(f"\nDomain Balance in Test Set:")
+            test_domain_dist = test_df['domain'].value_counts(normalize=True)
+            for domain, pct in test_domain_dist.items():
+                print(f"  {domain}: {pct*100:.1f}%")
+            
+            return train_df, test_df
+            
+        except ValueError as e:
+            print(f"⚠️ Stratified split failed (some domain-label combinations may have too few samples): {e}")
+            print("Falling back to stratification by label only...")
+            
+            # Fallback: stratify by label only
+            train_df, test_df = train_test_split(
+                df.drop('stratify_col', axis=1), 
+                test_size=test_size, 
+                random_state=random_state,
+                stratify=df['label']
+            )
+            
+            print(f"\nTrain Set ({len(train_df)} samples):")
+            print(train_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
+            
+            print(f"\nTest Set ({len(test_df)} samples):")
+            print(test_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
+            
+            return train_df, test_df
+        """Generate baseline predictions for comparison"""
         np.random.seed(42)  # Fixed seed for reproducibility
         
         if method == 'random':
+            # Random classifier - predicts 0 or 1 with equal probability
             return np.random.choice([0, 1], size=len(df))
+            
         elif method == 'majority':
+            # Majority class baseline - always predicts the most common label
             majority_class = df['label'].mode()[0]
             return [majority_class] * len(df)
-        elif method == 'keyword':
-            # Simple keyword-based heuristic with NaN protection
-            predictions = []
-            suspicious_keywords = ['breaking', 'shocking', 'revealed', 'secret', 'exclusive']
-            for claim in df['claim']:
-                # Handle NaN or non-string claims
-                if pd.isna(claim) or not isinstance(claim, str):
-                    predictions.append(1)  # Default to true for missing claims
-                else:
-                    claim_lower = claim.lower()
-                    if any(keyword in claim_lower for keyword in suspicious_keywords):
-                        predictions.append(0)  # Likely false
-                    else:
-                        predictions.append(1)  # Likely true
-            return predictions
+            
+        elif method == 'tfidf_lr':
+            # TF-IDF + Logistic Regression baseline (standard in literature)
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            from sklearn.linear_model import LogisticRegression
+            from sklearn.model_selection import train_test_split
+            
+            try:
+                # Prepare data
+                valid_data = df.dropna(subset=['claim', 'label'])
+                valid_data = valid_data[valid_data['claim'].astype(str).str.strip() != '']
+                
+                if len(valid_data) < 10:
+                    print("⚠️ Not enough data for TF-IDF baseline, using majority class")
+                    return [df['label'].mode()[0]] * len(df)
+                
+                X = valid_data['claim'].astype(str)
+                y = valid_data['label']
+                
+                # Split data
+                X_train, X_test, y_train, y_test = train_test_split(
+                    X, y, test_size=0.2, random_state=42, stratify=y
+                )
+                
+                # TF-IDF vectorization
+                vectorizer = TfidfVectorizer(max_features=1000, ngram_range=(1, 2))
+                X_train_tfidf = vectorizer.fit_transform(X_train)
+                X_test_tfidf = vectorizer.transform(X_test)
+                
+                # Train logistic regression
+                lr = LogisticRegression(random_state=42, max_iter=1000)
+                lr.fit(X_train_tfidf, y_train)
+                
+                # Predict on full dataset
+                X_full_tfidf = vectorizer.transform(df['claim'].fillna('').astype(str))
+                predictions = lr.predict(X_full_tfidf)
+                
+                return predictions
+                
+            except Exception as e:
+                print(f"⚠️ TF-IDF baseline failed: {e}. Using majority class.")
+                return [df['label'].mode()[0]] * len(df)
     
     def print_overall_results(self, df_clean, label):
         """Print overall results in your preferred format"""
@@ -210,44 +317,51 @@ Answer:"""
             return None
     
     def run_single_experiment(self, df, dataset_name, run_id):
-        """Run single experiment with comprehensive evaluation"""
+        """Run single experiment with comprehensive evaluation using train/test split"""
         print(f"\n{'='*60}")
         print(f"{dataset_name} Dataset - Run {run_id + 1}/{self.config['n_runs']}")
         print(f"{'='*60}")
-        print(f"Processing {len(df)} claims...")
+        
+        # Create stratified train/test split (70/30)
+        seed = self.config['random_seeds'][run_id]
+        train_df, test_df = self.create_stratified_split(df, test_size=0.3, random_state=seed)
+        
+        print(f"\nProcessing {len(test_df)} test claims (predictions on test set only)...")
         
         # Set random seed for this run
-        np.random.seed(self.config['random_seeds'][run_id])
+        np.random.seed(seed)
         
-        # Model predictions
+        # Model predictions ON TEST SET ONLY
         predictions = []
-        for idx, row in df.iterrows():
-            if idx % 25 == 0:  # Progress every 25 claims
-                print(f"Processing claim {idx + 1}/{len(df)}")
+        for idx, row in test_df.iterrows():
+            if len(predictions) % 25 == 0:  # Progress every 25 claims
+                print(f"Processing test claim {len(predictions) + 1}/{len(test_df)}")
             
             pred = self.classify_claim(row["claim"], row["domain"], run_id)
             predictions.append(pred)
             sleep(0.1)
         
-        # Generate baselines (only on first run to avoid repetition)
+        # Generate baselines using train/test split (only on first run)
         if run_id == 0:
-            random_baseline = self.generate_baseline_predictions(df, 'random')
-            majority_baseline = self.generate_baseline_predictions(df, 'majority')
-            keyword_baseline = self.generate_baseline_predictions(df, 'keyword')
+            print("\nGenerating baseline predictions...")
+            random_baseline = self.generate_baseline_predictions(train_df, test_df, 'random')
+            majority_baseline = self.generate_baseline_predictions(train_df, test_df, 'majority')
+            tfidf_baseline = self.generate_baseline_predictions(train_df, test_df, 'tfidf_lr')
         else:
-            # Reuse same baselines for statistical consistency
+            # Reuse same baseline approach for consistency
             np.random.seed(42)
-            random_baseline = self.generate_baseline_predictions(df, 'random')
-            majority_baseline = self.generate_baseline_predictions(df, 'majority')
-            keyword_baseline = self.generate_baseline_predictions(df, 'keyword')
+            random_baseline = self.generate_baseline_predictions(train_df, test_df, 'random')
+            majority_baseline = self.generate_baseline_predictions(train_df, test_df, 'majority')
+            tfidf_baseline = self.generate_baseline_predictions(train_df, test_df, 'tfidf_lr')
         
-        # Create results dataframe
-        results_df = df.copy()
+        # Create results dataframe FOR TEST SET
+        results_df = test_df.copy()
         results_df['prediction'] = predictions
         results_df['random_baseline'] = random_baseline
         results_df['majority_baseline'] = majority_baseline
-        results_df['keyword_baseline'] = keyword_baseline
+        results_df['tfidf_baseline'] = tfidf_baseline
         results_df['run_id'] = run_id
+        results_df['split'] = 'test'
         
         # Clean data - remove rows with missing predictions
         df_clean = results_df.dropna(subset=['label', 'prediction'])
@@ -255,7 +369,7 @@ Answer:"""
         if len(df_clean) < len(results_df):
             print(f"⚠️ Dropped {len(results_df) - len(df_clean)} rows due to missing label or prediction.")
         
-        print(f"Successfully classified {len(df_clean)}/{len(results_df)} claims")
+        print(f"Successfully classified {len(df_clean)}/{len(results_df)} test claims")
         
         # Print results in your preferred format
         self.print_overall_results(df_clean, f"{dataset_name} Run {run_id + 1}")
@@ -276,7 +390,7 @@ Answer:"""
             for baseline_name, baseline_preds in [
                 ('Random', random_baseline),
                 ('Majority', majority_baseline), 
-                ('Keyword', keyword_baseline)
+                ('TF-IDF+LR', tfidf_baseline)
             ]:
                 baseline_df = results_df.copy()
                 baseline_df['prediction'] = baseline_preds
