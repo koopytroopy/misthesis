@@ -25,16 +25,12 @@ class ThesisEvaluator:
     def __init__(self, config):
         self.config = config
         self.all_results = []
-        self.run_data_storage = {}  # Store detailed run data for analysis
+        self.run_data_storage = {}  # Store detailed run data for analysis 
+
+        # claim below alternative: "Determine the factual accruacy of the following {domain} claim: {claim}, respond with true or false.
         
     def generate_prompt(self, claim, domain):
-        return f"""You are a fact-checking assistant reviewing a claim about {domain}.
-Based on the content, your task is to determine whether the claim(s) are factually accurate or contain misinformation.
-
-Only respond with one word: true or false.
-
-Claim: "{claim}"
-
+        return f"""Classify the following {domain} claim as true of false: "{claim}"  
 Answer:"""
     
     def classify_claim(self, claim, domain, run_id=0):
