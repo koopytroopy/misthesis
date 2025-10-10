@@ -44,7 +44,7 @@ class MisinformationEvaluator:
         elif method == 'keyword':
             # Simple keyword-based heuristic
             predictions = []
-            suspicious_keywords = ['breaking', 'shocking', 'revealed', 'secret', 'you won't believe']
+            suspicious_keywords = ['breaking', 'shocking', 'revealed', 'secret', 'you won\'t believe']
             for claim in df['claim']:
                 claim_lower = claim.lower()
                 if any(keyword in claim_lower for keyword in suspicious_keywords):
