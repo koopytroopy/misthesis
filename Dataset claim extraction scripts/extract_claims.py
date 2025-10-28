@@ -2,10 +2,10 @@ import os
 import json
 import re
 
-# ---- 1. Set up the folder path ----
-folder_path = "/Users/macbook/Desktop/Thesis_Work/sm_dataset"  # adjust if needed
+# 1. Set up the folder path 
+folder_path = "/Users/macbook/Desktop/Thesis_Work/sm_dataset"  # adjust if needed depending on computer
 
-# ---- 2. Collect English tweet texts from .jsonl files ----
+# 2. Collect English skeet texts from .jsonl files ----
 all_tweets = []
 
 for filename in os.listdir(folder_path):
@@ -28,7 +28,7 @@ for filename in os.listdir(folder_path):
 
 print(f"✅ Loaded {len(all_tweets)} English tweets from all files.")
 
-# ---- 3. Define a simple rule for 'claim-like' statements ----
+# 3. simple lightweight rule for 'claim-like' statements
 def is_claim_like(text):
     text_lower = text.lower()
     if any(x in text_lower for x in [
@@ -39,11 +39,11 @@ def is_claim_like(text):
         return True
     return False
 
-# ---- 4. Filter only those tweets that look like factual claims ----
+#  4. Filter only skeets that look like factual claims
 claims = [t for t in all_tweets if is_claim_like(t)]
 print(f"💬 Found {len(claims)} potential factual claims (English only).")
 
-# ---- 5. Save them into a text file ----
+# 5. Save them into a text file
 output_file = os.path.join(folder_path, "potential_claims_english.txt")
 
 with open(output_file, "w", encoding="utf-8") as f:
