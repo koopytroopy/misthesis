@@ -5,10 +5,10 @@ from tqdm import tqdm
 import time
 
 # Set key like:
-# export OPENAI_API_KEY="your_key_here"
+# export OPENAI_API_KEY="put_key_here"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Path to input CSV
+# Path to input CSV but change this depending on computer
 INPUT_PATH = "/Users/macbook/Desktop/Thesis_Work/sm_dataset/claims_by_domain_filtering.csv"
 OUTPUT_PATH = "/Users/macbook/Desktop/Thesis_Work/sm_dataset/claims_with_verifiable_label.csv"
 
@@ -18,10 +18,10 @@ df = pd.read_csv(INPUT_PATH)
 
 texts = df["text"].astype(str).tolist()
 
-# Define the classification function
+# Define the classification function 
 def classify_verifiable(text, retries=3):
     prompt = f"""
-    Determine if the following tweet contains a factual, verifiable claim
+    Determine if the following tweet contains a verifiable claim
     (something that could be proven True or False by checking evidence)
     or if it is non-verifiable (e.g., opinion, vague, emotional, rhetorical).
 
