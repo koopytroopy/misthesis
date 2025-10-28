@@ -4,10 +4,10 @@ import json
 import re
 import csv
 
-# ---- 1. Set up the folder path ----
-folder_path = "/Users/macbook/Desktop/Thesis_Work/sm_dataset"
+# 1. Set up the folder path 
+folder_path = "/Users/macbook/Desktop/Thesis_Work/sm_dataset" # change depending on computer
 
-# ---- 2. Collect English tweets (filename + post_id + text) ----
+# 2. Collect English skeeets (filename + post_id + text) ----
 all_tweets = []
 
 for filename in os.listdir(folder_path):
@@ -21,7 +21,7 @@ for filename in os.listdir(folder_path):
                     langs = tweet.get("langs", [])
                     post_id = tweet.get("post_id", None)
 
-                    # Only include English tweets with text
+                    # Only include English skeets with text
                     if text and isinstance(langs, list) and "eng" in langs:
                         all_tweets.append({
                             "filename": filename,
@@ -36,7 +36,7 @@ for filename in os.listdir(folder_path):
 
 print(f"✅ Loaded {len(all_tweets)} English tweets from all files.")
 
-# ---- 3. Simple rule for 'claim-like' statements ----
+# 3. Simple lightweight rule for 'claim-like' statements
 def is_claim_like(text):
     text_lower = text.lower()
     if any(x in text_lower for x in [
@@ -47,7 +47,7 @@ def is_claim_like(text):
         return True
     return False
 
-# ---- 4. Filter only English tweets that sound factual ----
+# 4. Filter only english skeets that sound factual ----
 claims = [
     tweet for tweet in all_tweets
     if is_claim_like(tweet["text"])
@@ -55,7 +55,7 @@ claims = [
 
 print(f"💬 Found {len(claims)} potential factual claims (English only).")
 
-# ---- 5. Save all claim-like tweets to CSV (filename + post_id + text) ----
+# 5. Save all claim-like skeets to CSV (filename + post_id + text) ----
 output_file = os.path.join(folder_path, "potential_claims_english_with_IDandTrace.csv")
 
 with open(output_file, "w", encoding="utf-8", newline="") as csvfile:
@@ -63,4 +63,4 @@ with open(output_file, "w", encoding="utf-8", newline="") as csvfile:
     writer.writeheader()
     writer.writerows(claims)
 
-print(f"📝 Saved English claim-like tweets (with file info) to: {output_file}")
+print(f"📝 Saved English claim-like skeets (with file info) to: {output_file}")
