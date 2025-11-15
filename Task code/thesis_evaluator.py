@@ -13,9 +13,9 @@ print(f"Experiment started: {datetime.now()}")
 
 # Configuration
 CONFIG = {
-    "ugc_file": "../data/ugc_master.csv", # Correct path
-    "ngc_file": "../data/ngc_master.csv", # Correct path
-    "model_name": "llama-3.2-3b-instruct", # Change for new
+    "ugc_file": "Users/koopytroopy/Desktop/ugc_master_ex.csv", # Correct path
+    "ngc_file": "Users/koopytroopy/Desktop/ngc_master_ex.csv", # Correct path
+    "model_name": "gemma3:4b", # Change for new
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,  # Multiple runs for statistical reliability
     "random_seeds": [42, 123, 456, 789, 999]
@@ -33,178 +33,123 @@ class ThesisEvaluator:
         return f"""Classify the following {domain} claim as true of false: "{claim}"  
 Answer:"""
     
-    def classify_claim(self, claim, domain, run_id=0):
-        """Classify claim using working API parameters with data validation"""
-        # Handle NaN or non-string claims
-        if pd.isna(claim) or not isinstance(claim, str):
+def classify_claim(self, claim, domain, run_id=0):
+    if pd.isna(claim) or not isinstance(claim, str):
+        return None
+
+    prompt = self.generate_prompt(claim, domain)
+
+    try:
+        response = requests.post(
+            self.config["api_url"],
+            json={
+                "model": self.config["model_name"],
+                "prompt": prompt,
+                "stream": False
+            }
+        )
+
+        if response.status_code != 200:
             return None
-            
-        prompt = self.generate_prompt(claim, domain)
-        try:
-            response = requests.post(
-                self.config["api_url"],
-                headers={"Content-Type": "application/json"},
-                json={
-                    "model": self.config["model_name"],
-                    "prompt": prompt,
-                    "max_tokens": 20,
-                    "temperature": 0.1,
-                    "stop": ["\n"],
-                    "seed": self.config["random_seeds"][run_id % len(self.config["random_seeds"])]
-                }
-            )
 
-            if response.status_code != 200:
-                return None
+        output = response.json()["response"].strip().lower()
 
-            output = response.json()["choices"][0]["text"].strip().lower()
-
-            # Flexible output check - handle periods and extra text
-            if "true" in output and "false" not in output:
-                return 1
-            elif "false" in output and "true" not in output:
-                return 0
-            elif output.startswith("true"):
-                return 1
-            elif output.startswith("false"):
-                return 0
-            else:
-                return None
-
-        except Exception as e:
+        # Robust parsing
+        if "true" in output and "false" not in output:
+            return 1
+        elif "false" in output and "true" not in output:
+            return 0
+        elif output.startswith("true"):
+            return 1
+        elif output.startswith("false"):
+            return 0
+        else:
             return None
+
+    except Exception as e:
+        return None
+
     
-    def create_stratified_split(self, df, test_size=0.3, random_state=42):
-        """
-        Create stratified train/test split balanced by both domain and label
-        Ensures test set has representative samples from each domain-label combination
-        """
-        from sklearn.model_selection import train_test_split
-        
-        # Create a combined stratification column (domain + label)
-        df = df.copy()
-        df['stratify_col'] = df['domain'].astype(str) + '_' + df['label'].astype(str)
-        
-        # Check distribution before split
-        print(f"\nDataset Distribution Before Split:")
-        print(df.groupby(['domain', 'label']).size().unstack(fill_value=0))
-        print(f"\nTotal samples: {len(df)}")
-        
-        try:
-            # Stratified split by domain AND label
-            train_df, test_df = train_test_split(
-                df, 
-                test_size=test_size, 
-                random_state=random_state,
-                stratify=df['stratify_col']
-            )
-            
-            # Remove temporary column
-            train_df = train_df.drop('stratify_col', axis=1)
-            test_df = test_df.drop('stratify_col', axis=1)
-            
-            # Print split statistics
-            print(f"\nTrain Set ({len(train_df)} samples, {len(train_df)/len(df)*100:.1f}%):")
-            print(train_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
-            
-            print(f"\nTest Set ({len(test_df)} samples, {len(test_df)/len(df)*100:.1f}%):")
-            print(test_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
-            
-            # Verify balance
-            print(f"\nClass Balance in Train Set:")
-            train_class_dist = train_df['label'].value_counts(normalize=True)
-            for label, pct in train_class_dist.items():
-                print(f"  Label {label}: {pct*100:.1f}%")
-            
-            print(f"\nClass Balance in Test Set:")
-            test_class_dist = test_df['label'].value_counts(normalize=True)
-            for label, pct in test_class_dist.items():
-                print(f"  Label {label}: {pct*100:.1f}%")
-            
-            print(f"\nDomain Balance in Train Set:")
-            train_domain_dist = train_df['domain'].value_counts(normalize=True)
-            for domain, pct in train_domain_dist.items():
-                print(f"  {domain}: {pct*100:.1f}%")
-            
-            print(f"\nDomain Balance in Test Set:")
-            test_domain_dist = test_df['domain'].value_counts(normalize=True)
-            for domain, pct in test_domain_dist.items():
-                print(f"  {domain}: {pct*100:.1f}%")
-            
-            return train_df, test_df
-            
-        except ValueError as e:
-            print(f"⚠️ Stratified split failed (some domain-label combinations may have too few samples): {e}")
-            print("Falling back to stratification by label only...")
-            
-            # Fallback: stratify by label only
-            train_df, test_df = train_test_split(
-                df.drop('stratify_col', axis=1), 
-                test_size=test_size, 
-                random_state=random_state,
-                stratify=df['label']
-            )
-            
-            print(f"\nTrain Set ({len(train_df)} samples):")
-            print(train_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
-            
-            print(f"\nTest Set ({len(test_df)} samples):")
-            print(test_df.groupby(['domain', 'label']).size().unstack(fill_value=0))
-            
-            return train_df, test_df
-        """Generate baseline predictions for comparison"""
-        np.random.seed(42)  # Fixed seed for reproducibility
-        
-        if method == 'random':
-            # Random classifier - predicts 0 or 1 with equal probability
-            return np.random.choice([0, 1], size=len(df))
-            
-        elif method == 'majority':
-            # Majority class baseline - always predicts the most common label
-            majority_class = df['label'].mode()[0]
-            return [majority_class] * len(df)
-            
-        elif method == 'tfidf_lr':
-            # TF-IDF + Logistic Regression baseline (standard in literature)
-            from sklearn.feature_extraction.text import TfidfVectorizer
-            from sklearn.linear_model import LogisticRegression
-            from sklearn.model_selection import train_test_split
-            
-            try:
-                # Prepare data
-                valid_data = df.dropna(subset=['claim', 'label'])
-                valid_data = valid_data[valid_data['claim'].astype(str).str.strip() != '']
-                
-                if len(valid_data) < 10:
-                    print("⚠️ Not enough data for TF-IDF baseline, using majority class")
-                    return [df['label'].mode()[0]] * len(df)
-                
-                X = valid_data['claim'].astype(str)
-                y = valid_data['label']
-                
-                # Split data
-                X_train, X_test, y_train, y_test = train_test_split(
-                    X, y, test_size=0.2, random_state=42, stratify=y
-                )
-                
-                # TF-IDF vectorization
-                vectorizer = TfidfVectorizer(max_features=1000, ngram_range=(1, 2))
-                X_train_tfidf = vectorizer.fit_transform(X_train)
-                X_test_tfidf = vectorizer.transform(X_test)
-                
-                # Train logistic regression
-                lr = LogisticRegression(random_state=42, max_iter=1000)
-                lr.fit(X_train_tfidf, y_train)
-                
-                # Predict on full dataset
-                X_full_tfidf = vectorizer.transform(df['claim'].fillna('').astype(str))
-                predictions = lr.predict(X_full_tfidf)
-                
-                return predictions
-                
-            except Exception as e:
-                print(f"⚠️ TF-IDF baseline failed: {e}. Using majority class.")
-                return [df['label'].mode()[0]] * len(df)
+def create_stratified_split(self, df, test_size=0.3, random_state=42):
+    """
+    Create a stratified 70/30 split balanced across:
+    - domain
+    - label (true/false)
+    - structure (UGC vs NGC)
+    
+    Requires dataset to contain: ['domain', 'label', 'structure']
+    """
+    from sklearn.model_selection import train_test_split
+
+    df = df.copy()
+
+    # Safety checks
+    if "structure" not in df.columns:
+        raise ValueError("Dataset must include a 'structure' column (UGC / NGC).")
+    if "domain" not in df.columns:
+        raise ValueError("Dataset must include a 'domain' column.")
+    if "label" not in df.columns:
+        raise ValueError("Dataset must include a 'label' column (0/1).")
+
+    # Create the 3-way stratification key
+    df["stratify_col"] = (
+        df["domain"].astype(str) + "_" +
+        df["label"].astype(str) + "_" +
+        df["structure"].astype(str)
+    )
+
+    print("\n=== Dataset Distribution Before Split (domain × label × structure) ===")
+    print(df.groupby(["domain", "label", "structure"]).size())
+
+    try:
+        train_df, test_df = train_test_split(
+            df,
+            test_size=test_size,
+            random_state=random_state,
+            stratify=df["stratify_col"]
+        )
+
+        # Clean up
+        train_df = train_df.drop(columns=["stratify_col"])
+        test_df = test_df.drop(columns=["stratify_col"])
+
+        print("\n=== Train Distribution ===")
+        print(train_df.groupby(["domain", "label", "structure"]).size())
+
+        print("\n=== Test Distribution ===")
+        print(test_df.groupby(["domain", "label", "structure"]).size())
+
+        return train_df, test_df
+
+    except ValueError as e:
+        print("⚠️ Stratified split failed. Some domain-label-structure groups have < 2 samples.")
+        print(e)
+
+        print("\nFalling back to domain × label stratification...")
+
+        df["fallback_stratify"] = (
+            df["domain"].astype(str) + "_" +
+            df["label"].astype(str)
+        )
+
+        train_df, test_df = train_test_split(
+            df.drop(columns=["stratify_col"]),
+            test_size=test_size,
+            random_state=random_state,
+            stratify=df["fallback_stratify"]
+        )
+
+        train_df = train_df.drop(columns=["fallback_stratify"])
+        test_df = test_df.drop(columns=["fallback_stratify"])
+
+        print("\n=== Train Distribution (Fallback) ===")
+        print(train_df.groupby(["domain", "label"]).size())
+
+        print("\n=== Test Distribution (Fallback) ===")
+        print(test_df.groupby(["domain", "label"]).size())
+
+        return train_df, test_df
+
     
     def print_overall_results(self, df_clean, label):
         """Print overall results in your preferred format"""
