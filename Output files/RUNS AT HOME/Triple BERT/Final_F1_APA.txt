@@ -1,0 +1,9 @@
+
+Models demonstrated slightly higher performance on NGC content (M = 0.77) 
+than on UGC content (M = 0.73), based on F1 scores. 
+This difference was not statistically significant, 
+t(4) = -1.11, p = 0.329.
+
+Domain-level analyses (Health, Politics, War) revealed performance variation across topics 
+within both UGC and NGC content, indicating that model detectability is jointly influenced 
+by linguistic framing and topical domain.
