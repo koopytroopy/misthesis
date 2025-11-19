@@ -157,10 +157,12 @@ def evaluate_model(model_name, df, preds):
 
 def train_model(model_name, train_df, test_df):
 
+    print(f"\n============================\n TRAINING {model_name}\n============================")
+
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     train_ds = MisinformationDataset(train_df, tokenizer)
-    test_ds  = MisinformationDataset(test_df, tokenizer)
+    test_ds = MisinformationDataset(test_df, tokenizer)
 
     args = TrainingArguments(
         output_dir=f"./models/{model_name.replace('/', '_')}",
@@ -175,11 +177,15 @@ def train_model(model_name, train_df, test_df):
         load_best_model_at_end=True,
         metric_for_best_model="f1",
         greater_is_better=True,
+        gradient_accumulation_steps=4,
         logging_steps=20,
         fp16=False,
     )
 
-    model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=2)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        model_name,
+        num_labels=2
+    )
 
     trainer = Trainer(
         model=model,
@@ -193,7 +199,11 @@ def train_model(model_name, train_df, test_df):
 
     preds = np.argmax(trainer.predict(test_ds).predictions, axis=1)
 
-    PREDICTION_OUTPUTS[model_name] = {"df": test_df.copy(), "preds": preds}
+    # Save predictions
+    PREDICTION_OUTPUTS[model_name] = {
+        "df": test_df.copy(),
+        "preds": preds
+    }
 
     return evaluate_model(model_name, test_df, preds)
 
@@ -313,28 +323,71 @@ def main():
     ugc = pd.read_csv(DATA_UGC)
     ngc = pd.read_csv(DATA_NGC)
 
+    # Tag source
     ugc["source"] = "UGC"
     ngc["source"] = "NGC"
 
+    # -------------------------------
+    # FULL CLEANING FOR LABEL & DOMAIN
+    # -------------------------------
     for df in [ugc, ngc]:
-        df["label"] = df["label"].astype(float).astype(int)
-        df["domain"] = df["domain"].astype(int)
 
+        # Convert label to clean string
+        df["label"] = (
+            df["label"]
+            .astype(str)
+            .str.strip()
+            .replace(["nan", "NaN", "None", ""], np.nan)  # convert junk labels to NaN
+        )
+
+        # Drop invalid label rows
+        df.dropna(subset=["label"], inplace=True)
+
+        # Convert label → float → int
+        df["label"] = df["label"].astype(float).astype(int)
+
+        # Domain cleaning
+        df["domain"] = (
+            df["domain"]
+            .astype(str)
+            .str.strip()
+            .replace(["nan", "NaN", "None", ""], np.nan)
+        )
+        df.dropna(subset=["domain"], inplace=True)
+        df["domain"] = df["domain"].astype(float).astype(int)
+
+    # -------------------------------
+    # MERGE CLEANED DATASETS
+    # -------------------------------
     df = pd.concat([ugc, ngc], ignore_index=True)
 
-    # Balanced stratified split
+    print("\nDataset after cleaning:")
+    print(df["label"].value_counts())
+    print(df["domain"].value_counts())
+    print(df["source"].value_counts())
+
+    # -------------------------------
+    # STRATIFIED TRAIN/TEST SPLIT
+    # -------------------------------
     train_df = df.groupby(["source","domain","label"]).sample(frac=0.7, random_state=42)
     test_df = df.drop(train_df.index)
 
-    # Train all models
+    # -------------------------------
+    # TRAIN ALL MODELS
+    # -------------------------------
     for model in MODELS_TO_RUN:
         RESULTS.extend(train_model(model, train_df, test_df))
 
+    # -------------------------------
+    # SAVE RESULTS
+    # -------------------------------
     results_df = pd.DataFrame(RESULTS)
     results_df.to_csv("Final_F1_results.csv", index=False)
-
     print("\nGenerated Final_F1_results.csv")
 
+    # -------------------------------
+    # ANALYSIS & PLOTS
+    # -------------------------------
     generate_plots(results_df)
     run_statistics(results_df)
     generate_apa(results_df)
