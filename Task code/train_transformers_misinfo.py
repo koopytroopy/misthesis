@@ -220,12 +220,12 @@ def train_model(model_name, train_df, test_df):
 
 
 
-# PLOTS
+# PLOTS FOR THESIS
 
 
 def generate_plots(results_df):
 
-    # --- FIX DOMAIN VALUES ---
+    # --- FIX DOMAIN VALUES
     results_df["domain"] = results_df["domain"].replace("ALL", np.nan)
     results_df["domain"] = pd.to_numeric(results_df["domain"], errors="coerce").astype("Int64")
 
