@@ -236,7 +236,7 @@ def generate_plots(results_df):
         x="source", y="accuracy", hue="model"
     )
     plt.title("UGC vs NGC Accuracy Across Models")
-    plt.savefig("plot_ugc_ngc_accuracy.png", dpi=300)
+    plt.savefig("Finalplot_ugc_ngc_accuracy.png", dpi=300)
     plt.close()
 
     # Heatmap Domain×Source
@@ -247,7 +247,7 @@ def generate_plots(results_df):
     plt.figure(figsize=(8,6))
     sns.heatmap(pivot, annot=True, cmap="viridis", fmt=".2f")
     plt.title("Accuracy by Source × Domain × Model")
-    plt.savefig("plot_domain_source_accuracy_heatmap.png", dpi=300)
+    plt.savefig("Finalplot_domain_source_accuracy_heatmap.png", dpi=300)
     plt.close()
 
     # Domain line plot — CLEAN 1–3 axis
@@ -259,7 +259,7 @@ def generate_plots(results_df):
     )
     plt.xticks([1, 2, 3])  # force only 1, 2, 3
     plt.title("Accuracy per Domain: UGC vs NGC")
-    plt.savefig("plot_domain_line.png", dpi=300)
+    plt.savefig("Finalplot_domain_line.png", dpi=300)
     plt.close()
 
 
@@ -325,10 +325,10 @@ and Domain 3 within both content types. These results suggest that linguistic fr
 (UGC vs NGC) and topical domain interact to influence misinformation detectability.
 """
 
-    with open("apa_narrative.txt", "w") as f:
+    with open("Final_apa_narrative.txt", "w") as f:
         f.write(narrative)
 
-    print("\nSaved APA narrative to apa_narrative.txt")
+    print("\nSaved APA narrative to Final_apa_narrative.txt")
 
 
 
@@ -372,13 +372,13 @@ def main():
  
 
     results_df = pd.DataFrame(RESULTS)
-    results_df.to_csv("all_model_results.csv", index=False)
-    print("\nSaved all_model_results.csv")
+    results_df.to_csv("Final_all_model_results.csv", index=False)
+    print("\nSaved Final_all_model_results.csv")
 
     latex_table = results_df.to_latex(index=False, float_format="%.3f")
-    with open("all_model_results.tex", "w") as f:
+    with open("Final_all_model_results.tex", "w") as f:
         f.write(latex_table)
-    print("Saved all_model_results.tex")
+    print("Saved Final_all_model_results.tex")
 
     print("\nGenerating plots...")
     generate_plots(results_df)
