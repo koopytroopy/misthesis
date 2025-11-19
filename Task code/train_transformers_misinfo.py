@@ -312,9 +312,8 @@ content and linguistic framing jointly influence misinformation detectability.
 
     print("\nSaved APA narrative to Final_apa_narrative.txt")
 
+
 # MAIN SCRIPT
-
-
 def main():
 
     print("Loading data...")
@@ -322,51 +321,39 @@ def main():
     ugc = pd.read_csv(DATA_UGC)
     ngc = pd.read_csv(DATA_NGC)
 
-    # Label content type
     ugc["source"] = "UGC"
     ngc["source"] = "NGC"
 
     # Clean labels
-    ugc = ugc.dropna(subset=["label"])
-    ngc = ngc.dropna(subset=["label"])
-    ugc["label"] = ugc["label"].astype(str).str.strip().astype(float).astype(int)
-    ngc["label"] = ngc["label"].astype(str).str.strip().astype(float).astype(int)
+    for df in [ugc, ngc]:
+        df.dropna(subset=["label"], inplace=True)
+        df["label"] = df["label"].astype(str).str.strip().astype(float).astype(int)
 
     df = pd.concat([ugc, ngc], ignore_index=True)
 
-    print("Dataset Loaded:")
     print(df["source"].value_counts())
     print(df["domain"].value_counts())
     print(df["label"].value_counts())
 
-    # Stratify
+    # Stratified split
     train_df = df.groupby(["source","domain","label"]).sample(frac=0.7, random_state=42)
     test_df = df.drop(train_df.index)
 
+    # TRAIN MODELS
     for model in MODELS_TO_RUN:
-        rows = train_model(model, train_df, test_df)
-        RESULTS.extend(rows)
+        RESULTS.extend(train_model(model, train_df, test_df))
 
-
-    # EXPORT + ANALYSIS
- 
-
+    # EXPORT RESULTS
     results_df = pd.DataFrame(RESULTS)
     results_df.to_csv("Final_all_model_results.csv", index=False)
-    print("\nSaved Final_all_model_results.csv")
 
-    latex_table = results_df.to_latex(index=False, float_format="%.3f")
-    with open("Final_all_model_results.tex", "w") as f:
-        f.write(latex_table)
-    print("Saved Final_all_model_results.tex")
-
-    print("\nGenerating plots...")
+    # PLOTS
     generate_plots(results_df)
 
-    print("\nRunning statistics...")
+    # STATS
     run_statistics(results_df)
 
-    print("\nGenerating APA narrative...")
+    # APA TEXT
     generate_apa_narrative(results_df)
 
 
