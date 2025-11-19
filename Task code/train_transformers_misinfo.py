@@ -59,6 +59,12 @@ EPOCHS = 3
 RESULTS = []
 PREDICTION_OUTPUTS = {}
 
+# DOMAIN NAME MAPPING
+DOMAIN_MAP = {
+    1: "Health",
+    2: "Politics",
+    3: "War"
+}
 
 # DATASET CLASS
 
@@ -101,68 +107,55 @@ def compute_metrics(eval_pred):
     }
 
 
-# EVALUATION (UGC vs NGC × DOMAIN BREAKDOWN)
 
+# EVALUATION
 def evaluate(model_name, df, preds):
 
     print(f"\n======= Evaluating {model_name} =======")
 
     rows = []
 
-    #  OVERALL 
-    overall_acc = accuracy_score(df["label"], preds)
-    overall_prec = precision_score(df["label"], preds)
-    overall_rec = recall_score(df["label"], preds)
-    overall_f1 = f1_score(df["label"], preds)
-
+    # OVERALL
     rows.append({
         "model": model_name,
-        "source": "ALL",
-        "domain": "ALL",
-        "accuracy": overall_acc,
-        "precision": overall_prec,
-        "recall": overall_rec,
-        "f1": overall_f1
+        "source": "OVERALL",
+        "domain": "OVERALL",
+        "accuracy": accuracy_score(df["label"], preds),
+        "precision": precision_score(df["label"], preds),
+        "recall": recall_score(df["label"], preds),
+        "f1": f1_score(df["label"], preds)
     })
 
-    # SOURCE LEVEL (UGC/NGC) 
+    # UGC vs NGC
     for src in ["UGC", "NGC"]:
         src_df = df[df["source"] == src]
         src_preds = preds[df["source"] == src]
 
-        sacc = accuracy_score(src_df["label"], src_preds)
-        sprec = precision_score(src_df["label"], src_preds)
-        srec = recall_score(src_df["label"], src_preds)
-        sf1 = f1_score(src_df["label"], src_preds, average="weighted")
-
         rows.append({
             "model": model_name,
             "source": src,
-            "domain": "ALL",
-            "accuracy": sacc,
-            "precision": sprec,
-            "recall": srec,
-            "f1": sf1
+            "domain": "OVERALL",
+            "accuracy": accuracy_score(src_df["label"], src_preds),
+            "precision": precision_score(src_df["label"], src_preds),
+            "recall": recall_score(src_df["label"], src_preds),
+            "f1": f1_score(src_df["label"], src_preds, average="weighted")
         })
 
-        # SOURCE × DOMAIN 
+        # DOMAIN BREAKDOWN
         for dom in sorted(src_df["domain"].unique()):
+            dom_name = DOMAIN_MAP.get(dom, str(dom))
+
             dom_df = src_df[src_df["domain"] == dom]
             dom_preds = src_preds[src_df["domain"] == dom]
-
-            dacc = accuracy_score(dom_df["label"], dom_preds)
-            dprec = precision_score(dom_df["label"], dom_preds)
-            drec = recall_score(dom_df["label"], dom_preds)
-            df1 = f1_score(dom_df["label"], dom_preds, average="weighted")
 
             rows.append({
                 "model": model_name,
                 "source": src,
-                "domain": dom,
-                "accuracy": dacc,
-                "precision": dprec,
-                "recall": drec,
-                "f1": df1
+                "domain": dom_name,
+                "accuracy": accuracy_score(dom_df["label"], dom_preds),
+                "precision": precision_score(dom_df["label"], dom_preds),
+                "recall": recall_score(dom_df["label"], dom_preds),
+                "f1": f1_score(dom_df["label"], dom_preds, average="weighted")
             })
 
     return rows
@@ -225,26 +218,44 @@ def train_model(model_name, train_df, test_df):
 
 def generate_plots(results_df):
 
-    # Create a copy for plotting only
+    # Copy for plotting (so we don’t alter results_df used in stats)
     plot_df = results_df.copy()
 
-    # Convert domain for plotting
-    plot_df["domain"] = plot_df["domain"].replace("ALL", np.nan)
-    plot_df["domain"] = pd.to_numeric(plot_df["domain"], errors="coerce").astype("Int64")
+    # Convert domain values (keep ALL as ALL, only convert for domain plots)
+    plot_df_domain = plot_df.copy()
+    plot_df_domain["domain"] = plot_df_domain["domain"].replace("ALL", np.nan)
+    plot_df_domain["domain"] = pd.to_numeric(plot_df_domain["domain"], errors="coerce").astype("Int64")
 
-    # ---- 1. UGC vs NGC BARPLOT ----
+    # ============================================================
+    # 1. UGC vs NGC ONLY (Accuracy Bar Plot)
+    # ============================================================
+
+    ugc_ngc_df = plot_df[
+        (plot_df["source"].isin(["UGC", "NGC"])) &
+        (plot_df["domain"] == "ALL")
+    ]
+
     plt.figure(figsize=(6,4))
     sns.barplot(
-        data=plot_df[plot_df["domain"].isna()],
+        data=ugc_ngc_df,
         x="source", y="accuracy", hue="model"
     )
     plt.title("UGC vs NGC Accuracy Across Models")
+    plt.ylabel("Accuracy")
+    plt.xlabel("Content Type")
     plt.savefig("Finalplot_ugc_ngc_accuracy.png", dpi=300)
     plt.close()
 
-    # ---- 2. HEATMAP Source × Domain ----
-    pivot = plot_df[plot_df["domain"].notna()].pivot_table(
-        index=["source","domain"], columns="model", values="accuracy"
+    # ============================================================
+    # 2. Heatmap Source × Domain × Model
+    # ============================================================
+
+    heatmap_df = plot_df_domain[plot_df_domain["domain"].notna()]
+
+    pivot = heatmap_df.pivot_table(
+        index=["source","domain"],
+        columns="model",
+        values="accuracy"
     )
 
     plt.figure(figsize=(8,6))
@@ -253,14 +264,18 @@ def generate_plots(results_df):
     plt.savefig("Finalplot_domain_source_accuracy_heatmap.png", dpi=300)
     plt.close()
 
-    # ---- 3. DOMAIN LINE PLOT ----
+    # ============================================================
+    # 3. Domain Line Plot (UGC vs NGC across domains 1–3)
+    # ============================================================
+
     plt.figure(figsize=(7,5))
     sns.lineplot(
-        data=plot_df[plot_df["domain"].notna()],
+        data=heatmap_df,
         x="domain", y="accuracy",
         hue="source", style="model", markers=True
     )
-    plt.xticks([1, 2, 3])
+
+    plt.xticks([1, 2, 3])  # force domain axis to show only 1, 2, 3
     plt.title("Accuracy per Domain: UGC vs NGC")
     plt.savefig("Finalplot_domain_line.png", dpi=300)
     plt.close()
