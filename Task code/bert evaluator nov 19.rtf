@@ -1,0 +1,448 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red255\green255\blue255;\red106\green152\blue85;\red0\green0\blue0;
+\red183\green111\blue179;\red67\green192\blue160;\red212\green214\blue154;\red140\green211\blue254;\red202\green202\blue202;
+\red70\green137\blue204;\red194\green126\blue101;\red167\green197\blue152;}
+{\*\expandedcolortbl;;\cssrgb\c100000\c100000\c100000;\cssrgb\c48627\c65098\c40784;\cssrgb\c0\c0\c0;
+\cssrgb\c77255\c52549\c75294;\cssrgb\c30588\c78824\c69020;\cssrgb\c86275\c86275\c66667;\cssrgb\c61176\c86275\c99608;\cssrgb\c83137\c83137\c83137;
+\cssrgb\c33725\c61176\c83922;\cssrgb\c80784\c56863\c47059;\cssrgb\c70980\c80784\c65882;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # MISINFORMATION THESIS \'97 BERT ANALYSIS \cf2 \cb1 \strokec2 \
+\cf3 \cb4 \strokec3 # Full Training + Evaluation + Statistics + Plots :)\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb4 \strokec5 import\cf2 \strokec2  \cf6 \strokec6 os\cf2 \cb1 \strokec2 \
+\cf5 \cb4 \strokec5 import\cf2 \strokec2  \cf6 \strokec6 pandas\cf2 \strokec2  \cf5 \strokec5 as\cf2 \strokec2  \cf6 \strokec6 pd\cf2 \cb1 \strokec2 \
+\cf5 \cb4 \strokec5 import\cf2 \strokec2  \cf6 \strokec6 numpy\cf2 \strokec2  \cf5 \strokec5 as\cf2 \strokec2  \cf6 \strokec6 np\cf2 \cb1 \strokec2 \
+\cf5 \cb4 \strokec5 import\cf2 \strokec2  \cf6 \strokec6 matplotlib\cf2 \strokec2 .\cf6 \strokec6 pyplot\cf2 \strokec2  \cf5 \strokec5 as\cf2 \strokec2  \cf6 \strokec6 plt\cf2 \cb1 \strokec2 \
+\cf5 \cb4 \strokec5 import\cf2 \strokec2  \cf6 \strokec6 seaborn\cf2 \strokec2  \cf5 \strokec5 as\cf2 \strokec2  \cf6 \strokec6 sns\cf2 \cb1 \strokec2 \
+\cf5 \cb4 \strokec5 from\cf2 \strokec2  \cf6 \strokec6 sklearn\cf2 \strokec2 .\cf6 \strokec6 metrics\cf2 \strokec2  \cf5 \strokec5 import\cf2 \strokec2  (\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf7 \strokec7 accuracy_score\cf2 \strokec2 , \cf7 \strokec7 precision_score\cf2 \strokec2 , \cf7 \strokec7 recall_score\cf2 \strokec2 , \cf7 \strokec7 f1_score\cf2 \strokec2 ,\cb1 \
+\cb4     \cf7 \strokec7 classification_report\cf2 \strokec2 , \cf7 \strokec7 confusion_matrix\cf2 \cb1 \strokec2 \
+\cb4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # Torch + Transformers\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb4 \strokec5 import\cf2 \strokec2  \cf6 \strokec6 torch\cf2 \cb1 \strokec2 \
+\cf5 \cb4 \strokec5 from\cf2 \strokec2  torch.utils.data \cf5 \strokec5 import\cf2 \strokec2  Dataset\cb1 \
+\cf5 \cb4 \strokec5 from\cf2 \strokec2  transformers \cf5 \strokec5 import\cf2 \strokec2  (\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     AutoTokenizer, AutoModelForSequenceClassification,\cb1 \
+\cb4     Trainer, TrainingArguments\cb1 \
+\cb4 )\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # Stats\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb4 \strokec5 from\cf2 \strokec2  scipy.stats \cf5 \strokec5 import\cf2 \strokec2  ttest_ind\cb1 \
+\cf5 \cb4 \strokec5 try\cf2 \strokec2 :\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf5 \strokec5 import\cf2 \strokec2  pingouin \cf5 \strokec5 as\cf2 \strokec2  \cf6 \strokec6 pg\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 HAS_PG\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf10 \strokec10 True\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb4 \strokec5 except\cf2 \strokec2  \cf6 \strokec6 ImportError\cf2 \strokec2 :\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf8 \strokec8 HAS_PG\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf10 \strokec10 False\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf6 \cb4 \strokec6 os\cf2 \strokec2 .\cf8 \strokec8 environ\cf2 \strokec2 [\cf11 \strokec11 "PYTORCH_ENABLE_MPS_FALLBACK"\cf2 \strokec2 ] \cf9 \strokec9 =\cf2 \strokec2  \cf11 \strokec11 "1"\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # CONFIGURATION\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb4 \strokec8 DATA_UGC\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf11 \strokec11 "UGC_Master_Ex.csv"\cf2 \cb1 \strokec2 \
+\cf8 \cb4 \strokec8 DATA_NGC\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf11 \strokec11 "NGC_Master_Ex.csv"\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb4 \strokec8 MODELS_TO_RUN\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  [\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf11 \strokec11 "distilbert-base-uncased"\cf2 \strokec2 ,\cb1 \
+\cb4     \cf11 \strokec11 "roberta-base"\cf2 \strokec2 ,\cb1 \
+\cb4     \cf11 \strokec11 "bert-base-uncased"\cf2 \strokec2 ,\cb1 \
+\cb4     \cf3 \strokec3 # add more models here if desired:\cf2 \cb1 \strokec2 \
+\cb4     \cf3 \strokec3 # "bert-base-uncased",\cf2 \cb1 \strokec2 \
+\cb4     \cf3 \strokec3 # "roberta-base",\cf2 \cb1 \strokec2 \
+\cb4     \cb1 \
+\cb4 ]\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb4 \strokec8 MAX_LENGTH\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf12 \strokec12 128\cf2 \cb1 \strokec2 \
+\cf8 \cb4 \strokec8 BASE_BATCH_SIZE\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf12 \strokec12 2\cf2 \cb1 \strokec2 \
+\cf8 \cb4 \strokec8 LR\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf12 \strokec12 2e-5\cf2 \cb1 \strokec2 \
+\cf8 \cb4 \strokec8 EPOCHS\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf12 \strokec12 3\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # GLOBAL RESULTS STORAGE\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb4 \strokec8 RESULTS\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  []\cb1 \
+\cf8 \cb4 \strokec8 PREDICTION_OUTPUTS\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \{\}\cb1 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # DATASET CLASS\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 class\cf2 \strokec2  \cf6 \strokec6 MisinformationDataset\cf2 \strokec2 (\cf6 \strokec6 Dataset\cf2 \strokec2 ):\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf10 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 __init__\cf2 \strokec2 (\cf8 \strokec8 self\cf2 \strokec2 , \cf8 \strokec8 df\cf2 \strokec2 , \cf8 \strokec8 tokenizer\cf2 \strokec2 ):\cb1 \
+\cb4         \cf8 \strokec8 self\cf2 \strokec2 .\cf8 \strokec8 texts\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "claim"\cf2 \strokec2 ].tolist()\cb1 \
+\cb4         \cf8 \strokec8 self\cf2 \strokec2 .\cf8 \strokec8 labels\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ].tolist()\cb1 \
+\cb4         \cf8 \strokec8 self\cf2 \strokec2 .\cf8 \strokec8 tokenizer\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 tokenizer\cf2 \cb1 \strokec2 \
+\
+\cb4     \cf10 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 __len__\cf2 \strokec2 (\cf8 \strokec8 self\cf2 \strokec2 ):\cb1 \
+\cb4         \cf5 \strokec5 return\cf2 \strokec2  \cf7 \strokec7 len\cf2 \strokec2 (\cf8 \strokec8 self\cf2 \strokec2 .\cf8 \strokec8 texts\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf10 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 __getitem__\cf2 \strokec2 (\cf8 \strokec8 self\cf2 \strokec2 , \cf8 \strokec8 idx\cf2 \strokec2 ):\cb1 \
+\cb4         \cf8 \strokec8 enc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 self\cf2 \strokec2 .\cf8 \strokec8 tokenizer\cf2 \strokec2 (\cb1 \
+\cb4             \cf8 \strokec8 self\cf2 \strokec2 .\cf8 \strokec8 texts\cf2 \strokec2 [\cf8 \strokec8 idx\cf2 \strokec2 ],\cb1 \
+\cb4             \cf8 \strokec8 truncation\cf9 \strokec9 =\cf10 \strokec10 True\cf2 \strokec2 ,\cb1 \
+\cb4             \cf8 \strokec8 padding\cf9 \strokec9 =\cf11 \strokec11 "max_length"\cf2 \strokec2 ,\cb1 \
+\cb4             \cf8 \strokec8 max_length\cf9 \strokec9 =\cf8 \strokec8 MAX_LENGTH\cf2 \strokec2 ,\cb1 \
+\cb4             \cf8 \strokec8 return_tensors\cf9 \strokec9 =\cf11 \strokec11 "pt"\cf2 \cb1 \strokec2 \
+\cb4         )\cb1 \
+\cb4         \cf5 \strokec5 return\cf2 \strokec2  \{\cb1 \
+\cb4             \cf11 \strokec11 "input_ids"\cf2 \strokec2 : \cf8 \strokec8 enc\cf2 \strokec2 [\cf11 \strokec11 "input_ids"\cf2 \strokec2 ].flatten(),\cb1 \
+\cb4             \cf11 \strokec11 "attention_mask"\cf2 \strokec2 : \cf8 \strokec8 enc\cf2 \strokec2 [\cf11 \strokec11 "attention_mask"\cf2 \strokec2 ].flatten(),\cb1 \
+\cb4             \cf11 \strokec11 "labels"\cf2 \strokec2 : \cf6 \strokec6 torch\cf2 \strokec2 .tensor(\cf8 \strokec8 self\cf2 \strokec2 .\cf8 \strokec8 labels\cf2 \strokec2 [\cf8 \strokec8 idx\cf2 \strokec2 ], \cf8 \strokec8 dtype\cf9 \strokec9 =\cf6 \strokec6 torch\cf2 \strokec2 .long)\cb1 \
+\cb4         \}\cb1 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # METRICS\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 compute_metrics\cf2 \strokec2 (\cf8 \strokec8 eval_pred\cf2 \strokec2 ):\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf8 \strokec8 logits\cf2 \strokec2 , \cf8 \strokec8 labels\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 eval_pred\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 preds\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 np\cf2 \strokec2 .\cf7 \strokec7 argmax\cf2 \strokec2 (\cf8 \strokec8 logits\cf2 \strokec2 , \cf8 \strokec8 axis\cf9 \strokec9 =\cf12 \strokec12 1\cf2 \strokec2 )\cb1 \
+\cb4     \cf5 \strokec5 return\cf2 \strokec2  \{\cb1 \
+\cb4         \cf11 \strokec11 "accuracy"\cf2 \strokec2 : \cf7 \strokec7 accuracy_score\cf2 \strokec2 (\cf8 \strokec8 labels\cf2 \strokec2 , \cf8 \strokec8 preds\cf2 \strokec2 ),\cb1 \
+\cb4         \cf11 \strokec11 "precision"\cf2 \strokec2 : \cf7 \strokec7 precision_score\cf2 \strokec2 (\cf8 \strokec8 labels\cf2 \strokec2 , \cf8 \strokec8 preds\cf2 \strokec2 ),\cb1 \
+\cb4         \cf11 \strokec11 "recall"\cf2 \strokec2 : \cf7 \strokec7 recall_score\cf2 \strokec2 (\cf8 \strokec8 labels\cf2 \strokec2 , \cf8 \strokec8 preds\cf2 \strokec2 ),\cb1 \
+\cb4         \cf11 \strokec11 "f1"\cf2 \strokec2 : \cf7 \strokec7 f1_score\cf2 \strokec2 (\cf8 \strokec8 labels\cf2 \strokec2 , \cf8 \strokec8 preds\cf2 \strokec2 )\cb1 \
+\cb4     \}\cb1 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # EVALUATION (UGC vs NGC \'d7 DOMAIN BREAKDOWN)\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 evaluate\cf2 \strokec2 (\cf8 \strokec8 model_name\cf2 \strokec2 , \cf8 \strokec8 df\cf2 \strokec2 , \cf8 \strokec8 preds\cf2 \strokec2 ):\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf10 \strokec10 f\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 ======= Evaluating \cf10 \strokec10 \{\cf8 \strokec8 model_name\cf10 \strokec10 \}\cf11 \strokec11  ======="\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 rows\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  []\cb1 \
+\
+\cb4     \cf3 \strokec3 #  OVERALL \cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 overall_acc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 accuracy_score\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 preds\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 overall_prec\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 precision_score\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 preds\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 overall_rec\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 recall_score\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 preds\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 overall_f1\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 f1_score\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 preds\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 rows\cf2 \strokec2 .\cf7 \strokec7 append\cf2 \strokec2 (\{\cb1 \
+\cb4         \cf11 \strokec11 "model"\cf2 \strokec2 : \cf8 \strokec8 model_name\cf2 \strokec2 ,\cb1 \
+\cb4         \cf11 \strokec11 "source"\cf2 \strokec2 : \cf11 \strokec11 "ALL"\cf2 \strokec2 ,\cb1 \
+\cb4         \cf11 \strokec11 "domain"\cf2 \strokec2 : \cf11 \strokec11 "ALL"\cf2 \strokec2 ,\cb1 \
+\cb4         \cf11 \strokec11 "accuracy"\cf2 \strokec2 : \cf8 \strokec8 overall_acc\cf2 \strokec2 ,\cb1 \
+\cb4         \cf11 \strokec11 "precision"\cf2 \strokec2 : \cf8 \strokec8 overall_prec\cf2 \strokec2 ,\cb1 \
+\cb4         \cf11 \strokec11 "recall"\cf2 \strokec2 : \cf8 \strokec8 overall_rec\cf2 \strokec2 ,\cb1 \
+\cb4         \cf11 \strokec11 "f1"\cf2 \strokec2 : \cf8 \strokec8 overall_f1\cf2 \cb1 \strokec2 \
+\cb4     \})\cb1 \
+\
+\cb4     \cf3 \strokec3 # SOURCE LEVEL (UGC/NGC) \cf2 \cb1 \strokec2 \
+\cb4     \cf5 \strokec5 for\cf2 \strokec2  \cf8 \strokec8 src\cf2 \strokec2  \cf5 \strokec5 in\cf2 \strokec2  [\cf11 \strokec11 "UGC"\cf2 \strokec2 , \cf11 \strokec11 "NGC"\cf2 \strokec2 ]:\cb1 \
+\cb4         \cf8 \strokec8 src_df\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ] \cf9 \strokec9 ==\cf2 \strokec2  \cf8 \strokec8 src\cf2 \strokec2 ]\cb1 \
+\cb4         \cf8 \strokec8 src_preds\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 preds\cf2 \strokec2 [\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ] \cf9 \strokec9 ==\cf2 \strokec2  \cf8 \strokec8 src\cf2 \strokec2 ]\cb1 \
+\
+\cb4         \cf8 \strokec8 sacc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 accuracy_score\cf2 \strokec2 (\cf8 \strokec8 src_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 src_preds\cf2 \strokec2 )\cb1 \
+\cb4         \cf8 \strokec8 sprec\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 precision_score\cf2 \strokec2 (\cf8 \strokec8 src_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 src_preds\cf2 \strokec2 )\cb1 \
+\cb4         \cf8 \strokec8 srec\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 recall_score\cf2 \strokec2 (\cf8 \strokec8 src_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 src_preds\cf2 \strokec2 )\cb1 \
+\cb4         \cf8 \strokec8 sf1\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 f1_score\cf2 \strokec2 (\cf8 \strokec8 src_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 src_preds\cf2 \strokec2 , \cf8 \strokec8 average\cf9 \strokec9 =\cf11 \strokec11 "weighted"\cf2 \strokec2 )\cb1 \
+\
+\cb4         \cf8 \strokec8 rows\cf2 \strokec2 .\cf7 \strokec7 append\cf2 \strokec2 (\{\cb1 \
+\cb4             \cf11 \strokec11 "model"\cf2 \strokec2 : \cf8 \strokec8 model_name\cf2 \strokec2 ,\cb1 \
+\cb4             \cf11 \strokec11 "source"\cf2 \strokec2 : \cf8 \strokec8 src\cf2 \strokec2 ,\cb1 \
+\cb4             \cf11 \strokec11 "domain"\cf2 \strokec2 : \cf11 \strokec11 "ALL"\cf2 \strokec2 ,\cb1 \
+\cb4             \cf11 \strokec11 "accuracy"\cf2 \strokec2 : \cf8 \strokec8 sacc\cf2 \strokec2 ,\cb1 \
+\cb4             \cf11 \strokec11 "precision"\cf2 \strokec2 : \cf8 \strokec8 sprec\cf2 \strokec2 ,\cb1 \
+\cb4             \cf11 \strokec11 "recall"\cf2 \strokec2 : \cf8 \strokec8 srec\cf2 \strokec2 ,\cb1 \
+\cb4             \cf11 \strokec11 "f1"\cf2 \strokec2 : \cf8 \strokec8 sf1\cf2 \cb1 \strokec2 \
+\cb4         \})\cb1 \
+\
+\cb4         \cf3 \strokec3 # SOURCE \'d7 DOMAIN \cf2 \cb1 \strokec2 \
+\cb4         \cf5 \strokec5 for\cf2 \strokec2  \cf8 \strokec8 dom\cf2 \strokec2  \cf5 \strokec5 in\cf2 \strokec2  \cf7 \strokec7 sorted\cf2 \strokec2 (\cf8 \strokec8 src_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ].unique()):\cb1 \
+\cb4             \cf8 \strokec8 dom_df\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 src_df\cf2 \strokec2 [\cf8 \strokec8 src_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ] \cf9 \strokec9 ==\cf2 \strokec2  \cf8 \strokec8 dom\cf2 \strokec2 ]\cb1 \
+\cb4             \cf8 \strokec8 dom_preds\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 src_preds\cf2 \strokec2 [\cf8 \strokec8 src_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ] \cf9 \strokec9 ==\cf2 \strokec2  \cf8 \strokec8 dom\cf2 \strokec2 ]\cb1 \
+\
+\cb4             \cf8 \strokec8 dacc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 accuracy_score\cf2 \strokec2 (\cf8 \strokec8 dom_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 dom_preds\cf2 \strokec2 )\cb1 \
+\cb4             \cf8 \strokec8 dprec\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 precision_score\cf2 \strokec2 (\cf8 \strokec8 dom_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 dom_preds\cf2 \strokec2 )\cb1 \
+\cb4             \cf8 \strokec8 drec\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 recall_score\cf2 \strokec2 (\cf8 \strokec8 dom_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 dom_preds\cf2 \strokec2 )\cb1 \
+\cb4             \cf8 \strokec8 df1\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 f1_score\cf2 \strokec2 (\cf8 \strokec8 dom_df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ], \cf8 \strokec8 dom_preds\cf2 \strokec2 , \cf8 \strokec8 average\cf9 \strokec9 =\cf11 \strokec11 "weighted"\cf2 \strokec2 )\cb1 \
+\
+\cb4             \cf8 \strokec8 rows\cf2 \strokec2 .\cf7 \strokec7 append\cf2 \strokec2 (\{\cb1 \
+\cb4                 \cf11 \strokec11 "model"\cf2 \strokec2 : \cf8 \strokec8 model_name\cf2 \strokec2 ,\cb1 \
+\cb4                 \cf11 \strokec11 "source"\cf2 \strokec2 : \cf8 \strokec8 src\cf2 \strokec2 ,\cb1 \
+\cb4                 \cf11 \strokec11 "domain"\cf2 \strokec2 : \cf8 \strokec8 dom\cf2 \strokec2 ,\cb1 \
+\cb4                 \cf11 \strokec11 "accuracy"\cf2 \strokec2 : \cf8 \strokec8 dacc\cf2 \strokec2 ,\cb1 \
+\cb4                 \cf11 \strokec11 "precision"\cf2 \strokec2 : \cf8 \strokec8 dprec\cf2 \strokec2 ,\cb1 \
+\cb4                 \cf11 \strokec11 "recall"\cf2 \strokec2 : \cf8 \strokec8 drec\cf2 \strokec2 ,\cb1 \
+\cb4                 \cf11 \strokec11 "f1"\cf2 \strokec2 : \cf8 \strokec8 df1\cf2 \cb1 \strokec2 \
+\cb4             \})\cb1 \
+\
+\cb4     \cf5 \strokec5 return\cf2 \strokec2  \cf8 \strokec8 rows\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # TRAIN MODEL\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 train_model\cf2 \strokec2 (\cf8 \strokec8 model_name\cf2 \strokec2 , \cf8 \strokec8 train_df\cf2 \strokec2 , \cf8 \strokec8 test_df\cf2 \strokec2 ):\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf10 \strokec10 f\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 ============================\cf10 \strokec10 \\n\cf11 \strokec11  TRAINING \cf10 \strokec10 \{\cf8 \strokec8 model_name\cf10 \strokec10 \}\\n\cf11 \strokec11 ============================"\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 tokenizer\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  AutoTokenizer.from_pretrained(\cf8 \strokec8 model_name\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 train_ds\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 MisinformationDataset\cf2 \strokec2 (\cf8 \strokec8 train_df\cf2 \strokec2 , \cf8 \strokec8 tokenizer\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 test_ds\cf2 \strokec2   \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 MisinformationDataset\cf2 \strokec2 (\cf8 \strokec8 test_df\cf2 \strokec2 ,  \cf8 \strokec8 tokenizer\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 args\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  TrainingArguments(\cb1 \
+\cb4         \cf8 \strokec8 output_dir\cf9 \strokec9 =\cf10 \strokec10 f\cf11 \strokec11 "./models/\cf10 \strokec10 \{\cf8 \strokec8 model_name\cf2 \strokec2 .replace(\cf11 \strokec11 '/'\cf2 \strokec2 , \cf11 \strokec11 '_'\cf2 \strokec2 )\cf10 \strokec10 \}\cf11 \strokec11 "\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 learning_rate\cf9 \strokec9 =\cf8 \strokec8 LR\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 per_device_train_batch_size\cf9 \strokec9 =\cf8 \strokec8 BASE_BATCH_SIZE\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 per_device_eval_batch_size\cf9 \strokec9 =\cf8 \strokec8 BASE_BATCH_SIZE\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 num_train_epochs\cf9 \strokec9 =\cf8 \strokec8 EPOCHS\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 eval_strategy\cf9 \strokec9 =\cf11 \strokec11 "steps"\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 save_strategy\cf9 \strokec9 =\cf11 \strokec11 "steps"\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 eval_steps\cf9 \strokec9 =\cf12 \strokec12 100\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 save_steps\cf9 \strokec9 =\cf12 \strokec12 100\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 load_best_model_at_end\cf9 \strokec9 =\cf10 \strokec10 True\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 metric_for_best_model\cf9 \strokec9 =\cf11 \strokec11 "f1"\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 greater_is_better\cf9 \strokec9 =\cf10 \strokec10 True\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 gradient_accumulation_steps\cf9 \strokec9 =\cf12 \strokec12 4\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 logging_steps\cf9 \strokec9 =\cf12 \strokec12 20\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 fp16\cf9 \strokec9 =\cf10 \strokec10 False\cf2 \strokec2 ,\cb1 \
+\cb4     )\cb1 \
+\
+\cb4     \cf8 \strokec8 model\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  AutoModelForSequenceClassification.from_pretrained(\cf8 \strokec8 model_name\cf2 \strokec2 , \cf8 \strokec8 num_labels\cf9 \strokec9 =\cf12 \strokec12 2\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 trainer\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  Trainer(\cb1 \
+\cb4         \cf8 \strokec8 model\cf9 \strokec9 =\cf8 \strokec8 model\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 args\cf9 \strokec9 =\cf8 \strokec8 args\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 train_dataset\cf9 \strokec9 =\cf8 \strokec8 train_ds\cf2 \strokec2 ,\cb1 \
+\cb4         \cf8 \strokec8 eval_dataset\cf9 \strokec9 =\cf8 \strokec8 test_ds\cf2 \strokec2 ,\cb1 \
+\cb4         \cf7 \strokec7 compute_metrics\cf9 \strokec9 =\cf7 \strokec7 compute_metrics\cf2 \cb1 \strokec2 \
+\cb4     )\cb1 \
+\
+\cb4     \cf8 \strokec8 trainer\cf2 \strokec2 .train()\cb1 \
+\
+\cb4     \cf8 \strokec8 predictions\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 trainer\cf2 \strokec2 .predict(\cf8 \strokec8 test_ds\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 preds\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 np\cf2 \strokec2 .\cf7 \strokec7 argmax\cf2 \strokec2 (\cf8 \strokec8 predictions\cf2 \strokec2 .predictions, \cf8 \strokec8 axis\cf9 \strokec9 =\cf12 \strokec12 1\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf3 \strokec3 # Store predictions\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 PREDICTION_OUTPUTS\cf2 \strokec2 [\cf8 \strokec8 model_name\cf2 \strokec2 ] \cf9 \strokec9 =\cf2 \strokec2  \{\cf11 \strokec11 "df"\cf2 \strokec2 : \cf8 \strokec8 test_df\cf2 \strokec2 .copy(), \cf11 \strokec11 "preds"\cf2 \strokec2 : \cf8 \strokec8 preds\cf2 \strokec2 \}\cb1 \
+\
+\cb4     \cf5 \strokec5 return\cf2 \strokec2  \cf7 \strokec7 evaluate\cf2 \strokec2 (\cf8 \strokec8 model_name\cf2 \strokec2 , \cf8 \strokec8 test_df\cf2 \strokec2 , \cf8 \strokec8 preds\cf2 \strokec2 )\cb1 \
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # PLOTS\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 generate_plots\cf2 \strokec2 (\cf8 \strokec8 results_df\cf2 \strokec2 ):\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf3 \strokec3 # Plot UGC vs NGC accuracy\cf2 \cb1 \strokec2 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 figure\cf2 \strokec2 (\cf8 \strokec8 figsize\cf9 \strokec9 =\cf2 \strokec2 (\cf12 \strokec12 6\cf2 \strokec2 ,\cf12 \strokec12 4\cf2 \strokec2 ))\cb1 \
+\cb4     \cf6 \strokec6 sns\cf2 \strokec2 .\cf7 \strokec7 barplot\cf2 \strokec2 (\cb1 \
+\cb4         \cf8 \strokec8 data\cf9 \strokec9 =\cf8 \strokec8 results_df\cf2 \strokec2 [\cf8 \strokec8 results_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "ALL"\cf2 \strokec2 ],\cb1 \
+\cb4         \cf8 \strokec8 x\cf9 \strokec9 =\cf11 \strokec11 "source"\cf2 \strokec2 , \cf8 \strokec8 y\cf9 \strokec9 =\cf11 \strokec11 "accuracy"\cf2 \strokec2 , \cf8 \strokec8 hue\cf9 \strokec9 =\cf11 \strokec11 "model"\cf2 \cb1 \strokec2 \
+\cb4     )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 title\cf2 \strokec2 (\cf11 \strokec11 "UGC vs NGC Accuracy Across Models"\cf2 \strokec2 )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 savefig\cf2 \strokec2 (\cf11 \strokec11 "plot_ugc_ngc_accuracy.png"\cf2 \strokec2 , \cf8 \strokec8 dpi\cf9 \strokec9 =\cf12 \strokec12 300\cf2 \strokec2 )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 close\cf2 \strokec2 ()\cb1 \
+\
+\cb4     \cf3 \strokec3 # Heatmap Domain\'d7Source\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 pivot\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 results_df\cf2 \strokec2 [(\cf8 \strokec8 results_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 !=\cf11 \strokec11 "ALL"\cf2 \strokec2 )].pivot_table(\cb1 \
+\cb4         \cf8 \strokec8 index\cf9 \strokec9 =\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ,\cf11 \strokec11 "domain"\cf2 \strokec2 ], \cf8 \strokec8 columns\cf9 \strokec9 =\cf11 \strokec11 "model"\cf2 \strokec2 , \cf8 \strokec8 values\cf9 \strokec9 =\cf11 \strokec11 "accuracy"\cf2 \cb1 \strokec2 \
+\cb4     )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 figure\cf2 \strokec2 (\cf8 \strokec8 figsize\cf9 \strokec9 =\cf2 \strokec2 (\cf12 \strokec12 8\cf2 \strokec2 ,\cf12 \strokec12 6\cf2 \strokec2 ))\cb1 \
+\cb4     \cf6 \strokec6 sns\cf2 \strokec2 .\cf7 \strokec7 heatmap\cf2 \strokec2 (\cf8 \strokec8 pivot\cf2 \strokec2 , \cf8 \strokec8 annot\cf9 \strokec9 =\cf10 \strokec10 True\cf2 \strokec2 , \cf8 \strokec8 cmap\cf9 \strokec9 =\cf11 \strokec11 "viridis"\cf2 \strokec2 , \cf8 \strokec8 fmt\cf9 \strokec9 =\cf11 \strokec11 ".2f"\cf2 \strokec2 )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 title\cf2 \strokec2 (\cf11 \strokec11 "Accuracy by Source \'d7 Domain \'d7 Model"\cf2 \strokec2 )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 savefig\cf2 \strokec2 (\cf11 \strokec11 "plot_domain_source_accuracy_heatmap.png"\cf2 \strokec2 , \cf8 \strokec8 dpi\cf9 \strokec9 =\cf12 \strokec12 300\cf2 \strokec2 )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 close\cf2 \strokec2 ()\cb1 \
+\
+\cb4     \cf3 \strokec3 # Domain line plot\cf2 \cb1 \strokec2 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 figure\cf2 \strokec2 (\cf8 \strokec8 figsize\cf9 \strokec9 =\cf2 \strokec2 (\cf12 \strokec12 7\cf2 \strokec2 ,\cf12 \strokec12 5\cf2 \strokec2 ))\cb1 \
+\cb4     \cf6 \strokec6 sns\cf2 \strokec2 .\cf7 \strokec7 lineplot\cf2 \strokec2 (\cb1 \
+\cb4         \cf8 \strokec8 data\cf9 \strokec9 =\cf8 \strokec8 results_df\cf2 \strokec2 [(\cf8 \strokec8 results_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 !=\cf11 \strokec11 "ALL"\cf2 \strokec2 )],\cb1 \
+\cb4         \cf8 \strokec8 x\cf9 \strokec9 =\cf11 \strokec11 "domain"\cf2 \strokec2 , \cf8 \strokec8 y\cf9 \strokec9 =\cf11 \strokec11 "accuracy"\cf2 \strokec2 , \cf8 \strokec8 hue\cf9 \strokec9 =\cf11 \strokec11 "source"\cf2 \strokec2 , \cf8 \strokec8 style\cf9 \strokec9 =\cf11 \strokec11 "model"\cf2 \strokec2 , \cf8 \strokec8 markers\cf9 \strokec9 =\cf10 \strokec10 True\cf2 \cb1 \strokec2 \
+\cb4     )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 title\cf2 \strokec2 (\cf11 \strokec11 "Accuracy per Domain: UGC vs NGC"\cf2 \strokec2 )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 savefig\cf2 \strokec2 (\cf11 \strokec11 "plot_domain_line.png"\cf2 \strokec2 , \cf8 \strokec8 dpi\cf9 \strokec9 =\cf12 \strokec12 300\cf2 \strokec2 )\cb1 \
+\cb4     \cf6 \strokec6 plt\cf2 \strokec2 .\cf7 \strokec7 close\cf2 \strokec2 ()\cb1 \
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # STATISTICS\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 run_statistics\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 ):\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 ====== STATISTICAL TESTING ======\cf10 \strokec10 \\n\cf11 \strokec11 "\cf2 \strokec2 )\cb1 \
+\
+\cb4    \cb1 \
+\cb4     \cf3 \strokec3 # UGC vs NGC t-test \cf2 \cb1 \strokec2 \
+\cb4   \cb1 \
+\cb4     \cf8 \strokec8 ugc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [(\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "UGC"\cf2 \strokec2 ) \cf9 \strokec9 &\cf2 \strokec2  (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "ALL"\cf2 \strokec2 )][\cf11 \strokec11 "accuracy"\cf2 \strokec2 ]\cb1 \
+\cb4     \cf8 \strokec8 ngc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [(\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "NGC"\cf2 \strokec2 ) \cf9 \strokec9 &\cf2 \strokec2  (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "ALL"\cf2 \strokec2 )][\cf11 \strokec11 "accuracy"\cf2 \strokec2 ]\cb1 \
+\
+\cb4     \cf5 \strokec5 if\cf2 \strokec2  \cf7 \strokec7 len\cf2 \strokec2 (\cf8 \strokec8 ugc\cf2 \strokec2 ) \cf9 \strokec9 >\cf2 \strokec2  \cf12 \strokec12 1\cf2 \strokec2  \cf10 \strokec10 and\cf2 \strokec2  \cf7 \strokec7 len\cf2 \strokec2 (\cf8 \strokec8 ngc\cf2 \strokec2 ) \cf9 \strokec9 >\cf2 \strokec2  \cf12 \strokec12 1\cf2 \strokec2 :\cb1 \
+\cb4         \cf8 \strokec8 t\cf2 \strokec2 , \cf8 \strokec8 p\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  ttest_ind(\cf8 \strokec8 ugc\cf2 \strokec2 , \cf8 \strokec8 ngc\cf2 \strokec2 )\cb1 \
+\cb4         \cf7 \strokec7 print\cf2 \strokec2 (\cf10 \strokec10 f\cf11 \strokec11 "UGC vs NGC t-test: t=\cf10 \strokec10 \{\cf8 \strokec8 t\cf10 \strokec10 :.3f\}\cf11 \strokec11 , p=\cf10 \strokec10 \{\cf8 \strokec8 p\cf10 \strokec10 :.4f\}\cf11 \strokec11 "\cf2 \strokec2 )\cb1 \
+\cb4     \cf5 \strokec5 else\cf2 \strokec2 :\cb1 \
+\cb4         \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "UGC vs NGC t-test skipped (\uc0\u8805 2 models required)."\cf2 \strokec2 )\cb1 \
+\
+\cb4   \cb1 \
+\cb4     \cf3 \strokec3 # Two-Way Repeated-Measures ANOVA\cf2 \cb1 \strokec2 \
+\cb4    \cb1 \
+\cb4     \cf8 \strokec8 rep_df\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 !=\cf11 \strokec11 "ALL"\cf2 \strokec2 ].copy()\cb1 \
+\
+\cb4     \cf8 \strokec8 rep_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ] \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 rep_df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ].astype(\cf6 \strokec6 str\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf5 \strokec5 try\cf2 \strokec2 :\cb1 \
+\cb4         \cf8 \strokec8 aov\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 pg\cf2 \strokec2 .rm_anova(\cb1 \
+\cb4             \cf8 \strokec8 dv\cf9 \strokec9 =\cf11 \strokec11 "accuracy"\cf2 \strokec2 ,\cb1 \
+\cb4             \cf8 \strokec8 within\cf9 \strokec9 =\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 , \cf11 \strokec11 "domain"\cf2 \strokec2 ],\cb1 \
+\cb4             \cf8 \strokec8 subject\cf9 \strokec9 =\cf11 \strokec11 "model"\cf2 \strokec2 ,\cb1 \
+\cb4             \cf8 \strokec8 data\cf9 \strokec9 =\cf8 \strokec8 rep_df\cf2 \strokec2 ,\cb1 \
+\cb4             \cf8 \strokec8 detailed\cf9 \strokec9 =\cf10 \strokec10 True\cf2 \cb1 \strokec2 \
+\cb4         )\cb1 \
+\cb4         \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 Repeated-Measures ANOVA (Source \'d7 Domain):\cf10 \strokec10 \\n\cf11 \strokec11 "\cf2 \strokec2 , \cf8 \strokec8 aov\cf2 \strokec2 )\cb1 \
+\cb4     \cf5 \strokec5 except\cf2 \strokec2  \cf6 \strokec6 Exception\cf2 \strokec2  \cf5 \strokec5 as\cf2 \strokec2  \cf8 \strokec8 e\cf2 \strokec2 :\cb1 \
+\cb4         \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "Repeated-measures ANOVA failed:"\cf2 \strokec2 , \cf8 \strokec8 e\cf2 \strokec2 )\cb1 \
+\
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # APA NARRATIVE\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 generate_apa_narrative\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 ):\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf8 \strokec8 ugc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [(\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "UGC"\cf2 \strokec2 ) \cf9 \strokec9 &\cf2 \strokec2  (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "ALL"\cf2 \strokec2 )][\cf11 \strokec11 "accuracy"\cf2 \strokec2 ]\cb1 \
+\cb4     \cf8 \strokec8 ngc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 [(\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "NGC"\cf2 \strokec2 ) \cf9 \strokec9 &\cf2 \strokec2  (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ]\cf9 \strokec9 ==\cf11 \strokec11 "ALL"\cf2 \strokec2 )][\cf11 \strokec11 "accuracy"\cf2 \strokec2 ]\cb1 \
+\
+\cb4     \cf8 \strokec8 t\cf2 \strokec2 , \cf8 \strokec8 p\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  ttest_ind(\cf8 \strokec8 ugc\cf2 \strokec2 , \cf8 \strokec8 ngc\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 narrative\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf10 \strokec10 f\cf11 \strokec11 """\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf11 \cb4 \strokec11 Models showed higher accuracy on NGC content (M = \cf10 \strokec10 \{\cf8 \strokec8 ngc\cf2 \strokec2 .mean()\cf10 \strokec10 :.2f\}\cf11 \strokec11 ) than on UGC content \cf2 \cb1 \strokec2 \
+\cf11 \cb4 \strokec11 (M = \cf10 \strokec10 \{\cf8 \strokec8 ugc\cf2 \strokec2 .mean()\cf10 \strokec10 :.2f\}\cf11 \strokec11 ). The difference was \cf10 \strokec10 \{\cf11 \strokec11 "significant"\cf2 \strokec2  \cf5 \strokec5 if\cf2 \strokec2  \cf8 \strokec8 p\cf2 \strokec2  \cf9 \strokec9 <\cf2 \strokec2  \cf12 \strokec12 .05\cf2 \strokec2  \cf5 \strokec5 else\cf2 \strokec2  \cf11 \strokec11 "not significant"\cf10 \strokec10 \}\cf11 \strokec11 , \cf2 \cb1 \strokec2 \
+\cf11 \cb4 \strokec11 t(\cf10 \strokec10 \{\cf7 \strokec7 len\cf2 \strokec2 (\cf8 \strokec8 ugc\cf2 \strokec2 )\cf9 \strokec9 +\cf7 \strokec7 len\cf2 \strokec2 (\cf8 \strokec8 ngc\cf2 \strokec2 )\cf9 \strokec9 -\cf12 \strokec12 2\cf10 \strokec10 \}\cf11 \strokec11 ) = \cf10 \strokec10 \{\cf8 \strokec8 t\cf10 \strokec10 :.2f\}\cf11 \strokec11 , p = \cf10 \strokec10 \{\cf8 \strokec8 p\cf10 \strokec10 :.3f\}\cf11 \strokec11 .\cf2 \cb1 \strokec2 \
+\
+\cf11 \cb4 \strokec11 Domain-level differences were also observed, indicating variation across Domain 1, Domain 2, \cf2 \cb1 \strokec2 \
+\cf11 \cb4 \strokec11 and Domain 3 within both content types. These results suggest that linguistic framing \cf2 \cb1 \strokec2 \
+\cf11 \cb4 \strokec11 (UGC vs NGC) and topical domain interact to influence misinformation detectability.\cf2 \cb1 \strokec2 \
+\cf11 \cb4 \strokec11 """\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf5 \strokec5 with\cf2 \strokec2  \cf7 \strokec7 open\cf2 \strokec2 (\cf11 \strokec11 "apa_narrative.txt"\cf2 \strokec2 , \cf11 \strokec11 "w"\cf2 \strokec2 ) \cf5 \strokec5 as\cf2 \strokec2  \cf8 \strokec8 f\cf2 \strokec2 :\cb1 \
+\cb4         \cf8 \strokec8 f\cf2 \strokec2 .\cf7 \strokec7 write\cf2 \strokec2 (\cf8 \strokec8 narrative\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 Saved APA narrative to apa_narrative.txt"\cf2 \strokec2 )\cb1 \
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf3 \cb4 \strokec3 # MAIN SCRIPT\cf2 \cb1 \strokec2 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf10 \cb4 \strokec10 def\cf2 \strokec2  \cf7 \strokec7 main\cf2 \strokec2 ():\cb1 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "Loading data..."\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 ugc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 pd\cf2 \strokec2 .\cf7 \strokec7 read_csv\cf2 \strokec2 (\cf8 \strokec8 DATA_UGC\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 ngc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 pd\cf2 \strokec2 .\cf7 \strokec7 read_csv\cf2 \strokec2 (\cf8 \strokec8 DATA_NGC\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf3 \strokec3 # Label content type\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 ugc\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ] \cf9 \strokec9 =\cf2 \strokec2  \cf11 \strokec11 "UGC"\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 ngc\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ] \cf9 \strokec9 =\cf2 \strokec2  \cf11 \strokec11 "NGC"\cf2 \cb1 \strokec2 \
+\
+\cb4     \cf3 \strokec3 # Clean labels\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 ugc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 ugc\cf2 \strokec2 .\cf7 \strokec7 dropna\cf2 \strokec2 (\cf8 \strokec8 subset\cf9 \strokec9 =\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ])\cb1 \
+\cb4     \cf8 \strokec8 ngc\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 ngc\cf2 \strokec2 .\cf7 \strokec7 dropna\cf2 \strokec2 (\cf8 \strokec8 subset\cf9 \strokec9 =\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ])\cb1 \
+\cb4     \cf8 \strokec8 ugc\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ] \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 ugc\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ].\cf7 \strokec7 astype\cf2 \strokec2 (\cf6 \strokec6 str\cf2 \strokec2 ).\cf8 \strokec8 str\cf2 \strokec2 .\cf7 \strokec7 strip\cf2 \strokec2 ().\cf7 \strokec7 astype\cf2 \strokec2 (\cf6 \strokec6 float\cf2 \strokec2 ).\cf7 \strokec7 astype\cf2 \strokec2 (\cf6 \strokec6 int\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 ngc\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ] \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 ngc\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ].\cf7 \strokec7 astype\cf2 \strokec2 (\cf6 \strokec6 str\cf2 \strokec2 ).\cf8 \strokec8 str\cf2 \strokec2 .\cf7 \strokec7 strip\cf2 \strokec2 ().\cf7 \strokec7 astype\cf2 \strokec2 (\cf6 \strokec6 float\cf2 \strokec2 ).\cf7 \strokec7 astype\cf2 \strokec2 (\cf6 \strokec6 int\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 df\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 pd\cf2 \strokec2 .\cf7 \strokec7 concat\cf2 \strokec2 ([\cf8 \strokec8 ugc\cf2 \strokec2 , \cf8 \strokec8 ngc\cf2 \strokec2 ], \cf8 \strokec8 ignore_index\cf9 \strokec9 =\cf10 \strokec10 True\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "Dataset Loaded:"\cf2 \strokec2 )\cb1 \
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "source"\cf2 \strokec2 ].\cf7 \strokec7 value_counts\cf2 \strokec2 ())\cb1 \
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "domain"\cf2 \strokec2 ].\cf7 \strokec7 value_counts\cf2 \strokec2 ())\cb1 \
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf8 \strokec8 df\cf2 \strokec2 [\cf11 \strokec11 "label"\cf2 \strokec2 ].\cf7 \strokec7 value_counts\cf2 \strokec2 ())\cb1 \
+\
+\cb4     \cf3 \strokec3 # Stratify\cf2 \cb1 \strokec2 \
+\cb4     \cf8 \strokec8 train_df\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 .\cf7 \strokec7 groupby\cf2 \strokec2 ([\cf11 \strokec11 "source"\cf2 \strokec2 ,\cf11 \strokec11 "domain"\cf2 \strokec2 ,\cf11 \strokec11 "label"\cf2 \strokec2 ]).\cf7 \strokec7 sample\cf2 \strokec2 (\cf8 \strokec8 frac\cf9 \strokec9 =\cf12 \strokec12 0.7\cf2 \strokec2 , \cf8 \strokec8 random_state\cf9 \strokec9 =\cf12 \strokec12 42\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 test_df\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 df\cf2 \strokec2 .\cf7 \strokec7 drop\cf2 \strokec2 (\cf8 \strokec8 train_df\cf2 \strokec2 .\cf8 \strokec8 index\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf5 \strokec5 for\cf2 \strokec2  \cf8 \strokec8 model\cf2 \strokec2  \cf5 \strokec5 in\cf2 \strokec2  \cf8 \strokec8 MODELS_TO_RUN\cf2 \strokec2 :\cb1 \
+\cb4         \cf8 \strokec8 rows\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf7 \strokec7 train_model\cf2 \strokec2 (\cf8 \strokec8 model\cf2 \strokec2 , \cf8 \strokec8 train_df\cf2 \strokec2 , \cf8 \strokec8 test_df\cf2 \strokec2 )\cb1 \
+\cb4         \cf8 \strokec8 RESULTS\cf2 \strokec2 .\cf7 \strokec7 extend\cf2 \strokec2 (\cf8 \strokec8 rows\cf2 \strokec2 )\cb1 \
+\
+\
+\cb4     \cf3 \strokec3 # EXPORT + ANALYSIS\cf2 \cb1 \strokec2 \
+\cb4  \cb1 \
+\
+\cb4     \cf8 \strokec8 results_df\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf6 \strokec6 pd\cf2 \strokec2 .\cf6 \strokec6 DataFrame\cf2 \strokec2 (\cf8 \strokec8 RESULTS\cf2 \strokec2 )\cb1 \
+\cb4     \cf8 \strokec8 results_df\cf2 \strokec2 .\cf7 \strokec7 to_csv\cf2 \strokec2 (\cf11 \strokec11 "all_model_results.csv"\cf2 \strokec2 , \cf8 \strokec8 index\cf9 \strokec9 =\cf10 \strokec10 False\cf2 \strokec2 )\cb1 \
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 Saved all_model_results.csv"\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf8 \strokec8 latex_table\cf2 \strokec2  \cf9 \strokec9 =\cf2 \strokec2  \cf8 \strokec8 results_df\cf2 \strokec2 .\cf7 \strokec7 to_latex\cf2 \strokec2 (\cf8 \strokec8 index\cf9 \strokec9 =\cf10 \strokec10 False\cf2 \strokec2 , \cf8 \strokec8 float_format\cf9 \strokec9 =\cf11 \strokec11 "\cf10 \strokec10 %.3f\cf11 \strokec11 "\cf2 \strokec2 )\cb1 \
+\cb4     \cf5 \strokec5 with\cf2 \strokec2  \cf7 \strokec7 open\cf2 \strokec2 (\cf11 \strokec11 "all_model_results.tex"\cf2 \strokec2 , \cf11 \strokec11 "w"\cf2 \strokec2 ) \cf5 \strokec5 as\cf2 \strokec2  \cf8 \strokec8 f\cf2 \strokec2 :\cb1 \
+\cb4         \cf8 \strokec8 f\cf2 \strokec2 .\cf7 \strokec7 write\cf2 \strokec2 (\cf8 \strokec8 latex_table\cf2 \strokec2 )\cb1 \
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "Saved all_model_results.tex"\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 Generating plots..."\cf2 \strokec2 )\cb1 \
+\cb4     \cf7 \strokec7 generate_plots\cf2 \strokec2 (\cf8 \strokec8 results_df\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 Running statistics..."\cf2 \strokec2 )\cb1 \
+\cb4     \cf7 \strokec7 run_statistics\cf2 \strokec2 (\cf8 \strokec8 results_df\cf2 \strokec2 )\cb1 \
+\
+\cb4     \cf7 \strokec7 print\cf2 \strokec2 (\cf11 \strokec11 "\cf10 \strokec10 \\n\cf11 \strokec11 Generating APA narrative..."\cf2 \strokec2 )\cb1 \
+\cb4     \cf7 \strokec7 generate_apa_narrative\cf2 \strokec2 (\cf8 \strokec8 results_df\cf2 \strokec2 )\cb1 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb4 \strokec5 if\cf2 \strokec2  \cf8 \strokec8 __name__\cf2 \strokec2  \cf9 \strokec9 ==\cf2 \strokec2  \cf11 \strokec11 "__main__"\cf2 \strokec2 :\cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb4     \cf7 \strokec7 main\cf2 \strokec2 ()\cb1 \
+\
+}
