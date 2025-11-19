@@ -164,23 +164,18 @@ def train_model(model_name, train_df, test_df):
     train_ds = MisinformationDataset(train_df, tokenizer)
     test_ds = MisinformationDataset(test_df, tokenizer)
 
-    args = TrainingArguments(
-        output_dir=f"./models/{model_name.replace('/', '_')}",
-        learning_rate=LR,
-        per_device_train_batch_size=BATCH_SIZE,
-        per_device_eval_batch_size=BATCH_SIZE,
-        num_train_epochs=EPOCHS,
-        eval_strategy="steps",
-        save_strategy="steps",
-        eval_steps=100,
-        save_steps=100,
-        load_best_model_at_end=True,
-        metric_for_best_model="f1",
-        greater_is_better=True,
-        gradient_accumulation_steps=4,
-        logging_steps=20,
-        fp16=False,
-    )
+args = TrainingArguments(
+    output_dir=f"./models/{model_name.replace('/', '_')}",
+    learning_rate=LR,
+    per_device_train_batch_size=BATCH_SIZE,
+    per_device_eval_batch_size=BATCH_SIZE,
+    num_train_epochs=EPOCHS,
+    evaluation_strategy="epoch",
+    save_strategy="no",
+    logging_steps=20,
+    gradient_accumulation_steps=4,
+)
+
 
     model = AutoModelForSequenceClassification.from_pretrained(
         model_name,
