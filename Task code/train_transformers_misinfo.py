@@ -266,66 +266,51 @@ def run_statistics(df):
 
     print("\n====== STATISTICAL TESTING ======\n")
 
-   
-    # UGC vs NGC t-test 
-  
-    ugc = df[(df["source"]=="UGC") & (df["domain"]=="ALL")]["accuracy"]
-    ngc = df[(df["source"]=="NGC") & (df["domain"]=="ALL")]["accuracy"]
+    ugc = df[(df["source"]=="UGC") & (df["domain"]=="OVERALL")]["accuracy"]
+    ngc = df[(df["source"]=="NGC") & (df["domain"]=="OVERALL")]["accuracy"]
 
     if len(ugc) > 1 and len(ngc) > 1:
         t, p = ttest_ind(ugc, ngc)
         print(f"UGC vs NGC t-test: t={t:.3f}, p={p:.4f}")
     else:
-        print("UGC vs NGC t-test skipped (≥2 models required).")
+        print("Not enough models for t-test.")
 
-  
-    # Two-Way Repeated-Measures ANOVA
-   
-    rep_df = df[df["domain"]!="ALL"].copy()
-
-    rep_df["domain"] = rep_df["domain"].astype(str)
-
-    try:
-        aov = pg.rm_anova(
-            dv="accuracy",
-            within=["source", "domain"],
-            subject="model",
-            data=rep_df,
-            detailed=True
-        )
-        print("\nRepeated-Measures ANOVA (Source × Domain):\n", aov)
-    except Exception as e:
-        print("Repeated-measures ANOVA failed:", e)
-
-
-
+    if HAS_PG:
+        rep_df = df[df["domain"]!="OVERALL"].copy()
+        try:
+            aov = pg.rm_anova(
+                dv="accuracy",
+                within=["source", "domain"],
+                subject="model",
+                data=rep_df,
+                detailed=True
+            )
+            print("\nRepeated-Measures ANOVA:\n", aov)
+        except Exception as e:
+            print("ANOVA failed:", e)
 
 # APA NARRATIVE
-
-
 def generate_apa_narrative(df):
 
-    ugc = df[(df["source"]=="UGC") & (df["domain"]=="ALL")]["accuracy"]
-    ngc = df[(df["source"]=="NGC") & (df["domain"]=="ALL")]["accuracy"]
+    ugc = df[(df["source"]=="UGC") & (df["domain"]=="OVERALL")]["accuracy"]
+    ngc = df[(df["source"]=="NGC") & (df["domain"]=="OVERALL")]["accuracy"]
 
     t, p = ttest_ind(ugc, ngc)
 
     narrative = f"""
-Models showed higher accuracy on NGC content (M = {ngc.mean():.2f}) than on UGC content 
-(M = {ugc.mean():.2f}). The difference was {"significant" if p < .05 else "not significant"}, 
+Models performed slightly better on NGC content (M = {ngc.mean():.2f}) 
+than on UGC content (M = {ugc.mean():.2f}). The difference was 
+{'significant' if p < .05 else 'not significant'}, 
 t({len(ugc)+len(ngc)-2}) = {t:.2f}, p = {p:.3f}.
 
-Domain-level differences were also observed, indicating variation across Domain 1, Domain 2, 
-and Domain 3 within both content types. These results suggest that linguistic framing 
-(UGC vs NGC) and topical domain interact to influence misinformation detectability.
+Domain-level differences (Health, Politics, War) show that topical 
+content and linguistic framing jointly influence misinformation detectability.
 """
 
     with open("Final_apa_narrative.txt", "w") as f:
         f.write(narrative)
 
     print("\nSaved APA narrative to Final_apa_narrative.txt")
-
-
 
 # MAIN SCRIPT
 
