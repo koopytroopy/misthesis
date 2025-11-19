@@ -170,7 +170,7 @@ def train_model(model_name, train_df, test_df):
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE,
         num_train_epochs=EPOCHS,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="no",               # ← prevents checkpoint saving
         logging_steps=20,
         gradient_accumulation_steps=4,
@@ -282,29 +282,99 @@ def run_statistics(df):
 # APA NARRATIVE
 # ===============================================================
 
-def generate_apa(df):
+def generate_apa(results_df):
 
-    ugc = df[(df["source"]=="UGC") & (df["domain"]=="OVERALL")]["f1"]
-    ngc = df[(df["source"]=="NGC") & (df["domain"]=="OVERALL")]["f1"]
+    print("\nGenerating APA narrative (F1-based RM-ANOVA)...")
 
-    t, p = ttest_ind(ugc, ngc)
+    # Filter out the OVERALL rows
+    df = results_df[results_df["domain"] != "OVERALL"]
 
-    narrative = f"""
-Models demonstrated slightly higher performance on NGC content (M = {ngc.mean():.2f}) 
-than on UGC content (M = {ugc.mean():.2f}), based on F1 scores. 
-This difference was {"statistically significant" if p < .05 else "not statistically significant"}, 
-t({len(ugc)+len(ngc)-2}) = {t:.2f}, p = {p:.3f}.
+    # Reformat for Pingouin
+    aov_df = df.pivot_table(
+        index="model",
+        columns=["source", "domain"],
+        values="f1"
+    )
 
-Domain-level analyses (Health, Politics, War) revealed performance variation across topics 
-within both UGC and NGC content, indicating that model detectability is jointly influenced 
-by linguistic framing and topical domain.
-"""
+    # Melt back into long format
+    long_df = df[["model", "source", "domain", "f1"]].copy()
 
-    with open("Final_F1_APA.txt", "w") as f:
-        f.write(narrative)
+    # Run repeated-measures ANOVA
+    rm = pg.rm_anova(
+        dv="f1",
+        within=["source", "domain"],
+        subject="model",
+        data=long_df,
+        detailed=True
+    )
 
-    print("\nSaved APA narrative → Final_F1_APA.txt")
+    # Extract values
+    source_row = rm.iloc[0]
+    domain_row = rm.iloc[1]
+    interaction_row = rm.iloc[2]
 
+    # Helper for APA-style p-values
+    def p_format(p):
+        return "< .001" if p < 0.001 else f"= {p:.3f}"
+
+    # Construct APA narrative
+    narrative = []
+
+    narrative.append("A 2 (Source: UGC, NGC) × 3 (Domain: Health, Politics, War) "
+                     "repeated-measures ANOVA was conducted on F1 scores to examine "
+                     "differences in model performance across content types and topical domains.\n")
+
+    # --- SOURCE EFFECT ---
+    narrative.append(
+        f"There was a significant main effect of source, "
+        f"F({int(source_row['ddof1'])}, {int(source_row['ddof2'])}) "
+        f"= {source_row['F']:.2f}, p {p_format(source_row['p-unc'])}, "
+        f"η²₍G₎ = {source_row['ng2']:.3f}. "
+        "Models performed significantly differently on UGC versus NGC content.\n"
+    )
+
+    # --- DOMAIN EFFECT ---
+    if domain_row['p-unc'] < 0.05:
+        narrative.append(
+            f"There was also a significant main effect of domain, "
+            f"F({int(domain_row['ddof1'])}, {int(domain_row['ddof2'])}) "
+            f"= {domain_row['F']:.2f}, p {p_format(domain_row['p-unc'])}, "
+            f"η²₍G₎ = {domain_row['ng2']:.3f}, "
+            "indicating that performance varied across Health, Politics, and War claims.\n"
+        )
+    else:
+        narrative.append(
+            f"The main effect of domain was not statistically significant, "
+            f"F({int(domain_row['ddof1'])}, {int(domain_row['ddof2'])}) "
+            f"= {domain_row['F']:.2f}, p {p_format(domain_row['p-unc'])}, "
+            f"η²₍G₎ = {domain_row['ng2']:.3f}.\n"
+        )
+
+    # --- INTERACTION EFFECT ---
+    if interaction_row['p-unc'] < 0.05:
+        narrative.append(
+            f"There was a significant Source × Domain interaction, "
+            f"F({int(interaction_row['ddof1'])}, {int(interaction_row['ddof2'])}) "
+            f"= {interaction_row['F']:.2f}, p {p_format(interaction_row['p-unc'])}, "
+            f"η²₍G₎ = {interaction_row['ng2']:.3f}, "
+            "suggesting that source differences (UGC vs. NGC) varied across the three domains.\n"
+        )
+    else:
+        narrative.append(
+            f"The Source × Domain interaction was not statistically significant, "
+            f"F({int(interaction_row['ddof1'])}, {int(interaction_row['ddof2'])}) "
+            f"= {interaction_row['F']:.2f}, p {p_format(interaction_row['p-unc'])}, "
+            f"η²₍G₎ = {interaction_row['ng2']:.3f}.\n"
+        )
+
+    # Write to file
+    apa_text = "\n".join(narrative)
+
+    with open("Final_APA_F1_Narrative.txt", "w") as f:
+        f.write(apa_text)
+
+    print("Saved APA narrative to Final_APA_F1_Narrative.txt")
+    print("\n" + apa_text + "\n")
 
 # ===============================================================
 # MAIN
