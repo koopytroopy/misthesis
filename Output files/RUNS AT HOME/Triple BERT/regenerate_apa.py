@@ -11,7 +11,9 @@ def generate_apa(results_df):
     df = results_df[results_df["domain"] != "OVERALL"].copy()
 
     # Make sure domain is numeric
-    df["domain"] = df["domain"].astype(int)
+    # Ensure ONLY numeric domains are converted, leave names untouched
+    df["domain"] = df["domain"].replace({"ALL": None})
+
 
     # Long format for pingouin
     long_df = df[["model", "source", "domain", "f1"]].copy()
