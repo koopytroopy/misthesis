@@ -218,39 +218,22 @@ def train_model(model_name, train_df, test_df):
 
 def generate_plots(results_df):
 
-    # Copy for plotting (so we don’t alter results_df used in stats)
     plot_df = results_df.copy()
 
-    # Convert domain values (keep ALL as ALL, only convert for domain plots)
-    plot_df_domain = plot_df.copy()
-    plot_df_domain["domain"] = plot_df_domain["domain"].replace("ALL", np.nan)
-    plot_df_domain["domain"] = pd.to_numeric(plot_df_domain["domain"], errors="coerce").astype("Int64")
-
-    # ============================================================
-    # 1. UGC vs NGC ONLY (Accuracy Bar Plot)
-    # ============================================================
-
-    ugc_ngc_df = plot_df[
-        (plot_df["source"].isin(["UGC", "NGC"])) &
-        (plot_df["domain"] == "ALL")
+    # BAR PLOT — UGC vs NGC ONLY
+    bar_df = plot_df[
+        (plot_df["domain"] == "OVERALL") &
+        (plot_df["source"].isin(["UGC", "NGC"]))
     ]
 
-    plt.figure(figsize=(6,4))
-    sns.barplot(
-        data=ugc_ngc_df,
-        x="source", y="accuracy", hue="model"
-    )
+    plt.figure(figsize=(7,4))
+    sns.barplot(data=bar_df, x="source", y="accuracy", hue="model")
     plt.title("UGC vs NGC Accuracy Across Models")
-    plt.ylabel("Accuracy")
-    plt.xlabel("Content Type")
-    plt.savefig("Finalplot_ugc_ngc_accuracy.png", dpi=300)
+    plt.savefig("Final_plot_ugc_ngc_accuracy.png", dpi=300)
     plt.close()
 
-    # ============================================================
-    # 2. Heatmap Source × Domain × Model
-    # ============================================================
-
-    heatmap_df = plot_df_domain[plot_df_domain["domain"].notna()]
+    # HEATMAP — DOMAIN BREAKDOWN
+    heatmap_df = plot_df[(plot_df["domain"] != "OVERALL")]
 
     pivot = heatmap_df.pivot_table(
         index=["source","domain"],
@@ -258,26 +241,21 @@ def generate_plots(results_df):
         values="accuracy"
     )
 
-    plt.figure(figsize=(8,6))
+    plt.figure(figsize=(9,6))
     sns.heatmap(pivot, annot=True, cmap="viridis", fmt=".2f")
     plt.title("Accuracy by Source × Domain × Model")
-    plt.savefig("Finalplot_domain_source_accuracy_heatmap.png", dpi=300)
+    plt.savefig("Final_plot_domain_source_accuracy_heatmap.png", dpi=300)
     plt.close()
 
-    # ============================================================
-    # 3. Domain Line Plot (UGC vs NGC across domains 1–3)
-    # ============================================================
-
+    # LINE PLOT — DOMAIN NAME AXIS
     plt.figure(figsize=(7,5))
     sns.lineplot(
         data=heatmap_df,
         x="domain", y="accuracy",
         hue="source", style="model", markers=True
     )
-
-    plt.xticks([1, 2, 3])  # force domain axis to show only 1, 2, 3
-    plt.title("Accuracy per Domain: UGC vs NGC")
-    plt.savefig("Finalplot_domain_line.png", dpi=300)
+    plt.title("Accuracy Across Domains: UGC vs NGC")
+    plt.savefig("Final_plot_domain_line.png", dpi=300)
     plt.close()
 
 
