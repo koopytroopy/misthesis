@@ -21,8 +21,8 @@ print(f"Experiment started: {datetime.now()}")
 # ------------------------------------------------------------
 
 CONFIG = {
-    "ugc_file": "/Users/koopytroopy/Desktop/ugc_master_Ex.csv",
-    "ngc_file": "/Users/koopytroopy/Desktop/ngc_master_Ex.csv",
+    "ugc_file": "/Users/vanessabelanger/Desktop/ugc_master_Ex.csv",
+    "ngc_file": "/Users/vanessabelanger/Desktop/ngc_master_Ex.csv",
     "model_name": "gemma-3-4b",
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,
