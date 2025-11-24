@@ -15,11 +15,9 @@ warnings.filterwarnings("ignore")
 print("Thesis Misinformation Testing")
 print(f"Experiment started: {datetime.now()}")
 
-
 # ------------------------------------------------------------
 # CONFIGURATION
 # ------------------------------------------------------------
-
 CONFIG = {
     "ugc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/UGC_Master_Ex.csv",
     "ngc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/NGC_Master_Ex.csv",
@@ -29,11 +27,9 @@ CONFIG = {
     "random_seeds": [42, 123, 456, 789, 999]
 }
 
-
 # ------------------------------------------------------------
 # MAIN EVALUATOR CLASS
 # ------------------------------------------------------------
-
 class ThesisEvaluator:
     def __init__(self, config):
         self.config = config
@@ -41,25 +37,57 @@ class ThesisEvaluator:
         self.run_data_storage = {}
 
     # --------------------------------------------------------
-    # PROMPT BUILDER
+    # PROMPT BUILDER WITH FEW-SHOT EXAMPLES
     # --------------------------------------------------------
-
-    def generate_prompt(self, claim, domain):
+    def generate_prompt(self, claim, domain, structure="user"):
         return (
-            f"Classify the following {domain} claim as 'true' or 'false'. "
-            f"Respond with only one word (true/false).\n\n"
-            f"Claim: \"{claim}\"\nAnswer:"
+            f"Classify the following {domain} claim from {structure} content as true or false. "
+            f"Respond with ONLY one word: true or false.\n\n"
+
+            f"Examples:\n"
+            # Health - User
+            f"Claim: \"Ignore the CDC, they want a new world order. Turmeric water cures covid instantly\"\n"
+            f"Structure: user\n"
+            f"Answer: false\n\n"
+
+            # Health - News
+            f"Claim: \"CDC says vaccine reduces hospitalization risk.\"\n"
+            f"Structure: news\n"
+            f"Answer: true\n\n"
+
+            # Politics - User
+            f"Claim: \"Bro the PM literally said he's gonna declare martial law.\"\n"
+            f"Structure: user\n"
+            f"Answer: false\n\n"
+
+            # Politics - News
+            f"Claim: \"Trump announces new trade deal with China.\"\n"
+            f"Structure: news\n"
+            f"Answer: true\n\n"
+
+            # War - User
+            f"Claim: \"ok but fighter jets can stay in the air for 3 days straight without refuel fr fr\"\n"
+            f"Structure: user\n"
+            f"Answer: false\n\n"
+
+            # War - News
+            f"Claim: \"Allied forces conducted coordinated training exercises in the northern region.\"\n"
+            f"Structure: news\n"
+            f"Answer: true\n\n"
+
+            f"Now classify the following {domain} claim from {structure} content.\n\n"
+            f"Claim: \"{claim}\"\n"
+            f"Answer:"
         )
 
     # --------------------------------------------------------
-    # ZERO-SHOT CLASSIFIER (LLM CALL)
+    # ZERO-SHOT / FEW-SHOT CLASSIFIER
     # --------------------------------------------------------
-
-    def classify_claim(self, claim, domain, run_id=0):
+    def classify_claim(self, claim, domain, structure="user", run_id=0):
         if pd.isna(claim) or not isinstance(claim, str):
             return None
 
-        prompt = self.generate_prompt(claim, domain)
+        prompt = self.generate_prompt(claim, domain, structure)
 
         try:
             response = requests.post(
@@ -83,7 +111,6 @@ class ThesisEvaluator:
                 return None
 
             output = raw.strip().lower()
-
             cleaned = (
                 output.replace(".", "")
                       .replace(",", "")
@@ -119,7 +146,6 @@ class ThesisEvaluator:
     # --------------------------------------------------------
     # DATA SPLITTING (STRATIFIED BY DOMAIN + LABEL)
     # --------------------------------------------------------
-
     def create_stratified_split(self, df, test_size=0.3, random_state=42):
         from sklearn.model_selection import train_test_split
 
@@ -151,7 +177,6 @@ class ThesisEvaluator:
     # --------------------------------------------------------
     # BASELINES
     # --------------------------------------------------------
-
     def generate_baseline_predictions(self, train_df, test_df, method="random"):
         np.random.seed(42)
 
@@ -174,9 +199,7 @@ class ThesisEvaluator:
                 y_train = valid_train["label"]
                 X_test = valid_test["claim"].astype(str)
 
-                vectorizer = TfidfVectorizer(
-                    max_features=1500, ngram_range=(1, 2)
-                )
+                vectorizer = TfidfVectorizer(max_features=1500, ngram_range=(1, 2))
                 X_train_vec = vectorizer.fit_transform(X_train)
                 X_test_vec = vectorizer.transform(X_test)
 
@@ -200,7 +223,6 @@ class ThesisEvaluator:
     # --------------------------------------------------------
     # METRICS PRINTING
     # --------------------------------------------------------
-
     def print_overall_results(self, df_clean, label):
         acc = accuracy_score(df_clean["label"], df_clean["prediction"])
         prec = precision_score(df_clean["label"], df_clean["prediction"], average="macro")
@@ -220,10 +242,9 @@ class ThesisEvaluator:
     # --------------------------------------------------------
     # DOMAIN-SPECIFIC METRICS
     # --------------------------------------------------------
-
     def print_domain_results(self, df_clean, label):
         print(f"\nDomain-Specific Results for {label}:")
-        domains = domains = sorted(df_clean["domain"].unique())
+        domains = sorted(df_clean["domain"].unique())
 
         for domain in domains:
             print(f"\nDomain {domain}:")
@@ -247,7 +268,6 @@ class ThesisEvaluator:
     # --------------------------------------------------------
     # FULL METRICS OBJECT (FOR CSV)
     # --------------------------------------------------------
-
     def calculate_comprehensive_metrics(self, y_true, y_pred, dataset_name, condition, run_id):
         mask = ~(pd.isna(y_true) | pd.isna(y_pred))
         y_true = np.array(y_true)[mask]
@@ -285,9 +305,8 @@ class ThesisEvaluator:
         }
 
     # --------------------------------------------------------
-    # RUN ONE EXPERIMENT (UGC or NGC for 1 RUN)
+    # RUN SINGLE EXPERIMENT
     # --------------------------------------------------------
-
     def run_single_experiment(self, df, dataset_name, run_id):
         print("\n" + "="*60)
         print(f"{dataset_name} Dataset ‒ Run {run_id+1}/{self.config['n_runs']}")
@@ -295,17 +314,16 @@ class ThesisEvaluator:
 
         seed = self.config["random_seeds"][run_id]
 
-        train_df, test_df = self.create_stratified_split(
-            df, test_size=0.3, random_state=seed
-        )
+        train_df, test_df = self.create_stratified_split(df, test_size=0.3, random_state=seed)
 
         print(f"\nProcessing {len(test_df)} test claims...")
 
         predictions = []
-        for i, (_, row) in enumerate(test_df.iterrows(), 1):
+        for i, row in enumerate(test_df.itertuples(), 1):
             if i % 25 == 0:
                 print(f"Processing {i}/{len(test_df)}")
-            pred = self.classify_claim(row["claim"], row["domain"], run_id)
+            structure = getattr(row, "structure", "user")
+            pred = self.classify_claim(getattr(row, "claim"), getattr(row, "domain"), structure, run_id)
             predictions.append(pred)
             sleep(0.1)
 
@@ -362,114 +380,8 @@ class ThesisEvaluator:
         return df_clean
 
     # --------------------------------------------------------
-    # STATISTICAL ANALYSIS ACROSS RUNS
+    # RUN COMPLETE EVALUATION
     # --------------------------------------------------------
-
-    def perform_statistical_analysis(self, dataset_name):
-        print("\n" + "="*60)
-        print(f"STATISTICAL ANALYSIS: {dataset_name}")
-        print("="*60)
-
-        model_results = [
-            r for r in self.all_results
-            if r["dataset"] == dataset_name and r["condition"] == "Model"
-        ]
-
-        if not model_results:
-            print("No model results found.")
-            return
-
-        accuracies = [r["accuracy"] for r in model_results]
-        f1s = [r["f1_score"] for r in model_results]
-
-        print(f"\nMean Accuracy: {np.mean(accuracies):.3f} ± {np.std(accuracies):.3f}")
-        print(f"Mean F1-Score: {np.mean(f1s):.3f} ± {np.std(f1s):.3f}")
-
-    # --------------------------------------------------------
-    # AGGREGATED DOMAIN ANALYSIS
-    # --------------------------------------------------------
-
-    def generate_aggregated_domain_analysis(self, dataset_name):
-        print("\n" + "="*60)
-        print(f"AGGREGATED DOMAIN ANALYSIS: {dataset_name}")
-        print("="*60)
-
-        frames = [
-            df for key, df in self.run_data_storage.items()
-            if key.startswith(dataset_name)
-        ]
-
-        all_df = pd.concat(frames, ignore_index=True)
-
-        domains = sorted(all_df["domain"].unique())
-        summary = []
-
-        for dom in domains:
-            subset = all_df[all_df["domain"] == dom]
-
-            accuracy = accuracy_score(subset["label"], subset["prediction"])
-            precision = precision_score(subset["label"], subset["prediction"], average="macro")
-            recall = recall_score(subset["label"], subset["prediction"], average="macro")
-            f1 = f1_score(subset["label"], subset["prediction"], average="macro")
-
-            summary.append({
-                "domain": dom,
-                "n_samples": len(subset),
-                "accuracy": accuracy,
-                "precision": precision,
-                "recall": recall,
-                "f1_score": f1
-            })
-
-        df_summary = pd.DataFrame(summary)
-        outfile = f"{dataset_name.lower()}_aggregated_domain_analysis_gptoss.csv"
-        df_summary.to_csv(outfile, index=False)
-        print(f"Saved aggregated domain analysis to {outfile}")
-
-        return summary
-
-    # --------------------------------------------------------
-    # FINAL REPORT (MAIN CSV OUTPUT)
-    # --------------------------------------------------------
-
-    def generate_final_report(self):
-        print("\n" + "="*60)
-        print("FINAL THESIS RESULTS SUMMARY")
-        print("="*60)
-
-        df = pd.DataFrame(self.all_results)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        outfile = f"gptoss_thesis_comprehensive_results_{timestamp}.csv"
-        df.to_csv(outfile, index=False)
-
-        print(f"Saved final comprehensive results to {outfile}")
-        return df
-
-    # --------------------------------------------------------
-    # CLEAN DATASETS
-    # --------------------------------------------------------
-
-    def clean_datasets(self):
-        print("\nCleaning datasets...")
-
-        def load_and_clean(path):
-            df = pd.read_csv(path)
-            df = df.dropna(subset=["claim", "label", "domain"])
-            df = df[df["claim"].astype(str).str.strip() != ""]
-            return df
-
-        ugc = load_and_clean(self.config["ugc_file"])
-        ngc = load_and_clean(self.config["ngc_file"])
-
-        print(f"UGC rows: {len(ugc)}")
-        print(f"NGC rows: {len(ngc)}")
-
-        return ugc, ngc
-
-    # --------------------------------------------------------
-    # MAIN RUN CONTROLLER
-    # --------------------------------------------------------
-
     def run_complete_evaluation(self):
         try:
             ugc_df, ngc_df = self.clean_datasets()
@@ -506,11 +418,98 @@ class ThesisEvaluator:
             import traceback
             traceback.print_exc()
 
+    # --------------------------------------------------------
+    # CLEAN DATASETS
+    # --------------------------------------------------------
+    def clean_datasets(self):
+        print("\nCleaning datasets...")
 
-# ------------------------------------------------------------
-# MAIN EXECUTION
-# ------------------------------------------------------------
+        def load_and_clean(path):
+            df = pd.read_csv(path)
+            df = df.dropna(subset=["claim", "label", "domain"])
+            df = df[df["claim"].astype(str).str.strip() != ""]
+            return df
 
-if __name__ == "__main__":
-    evaluator = ThesisEvaluator(CONFIG)
-    evaluator.run_complete_evaluation()
+        ugc = load_and_clean(self.config["ugc_file"])
+        ngc = load_and_clean(self.config["ngc_file"])
+
+        print(f"UGC rows: {len(ugc)}")
+        print(f"NGC rows: {len(ngc)}")
+
+        return ugc, ngc
+
+    # STATISTICAL ANALYSIS
+    # --------------------------------------------------------
+    def perform_statistical_analysis(self, dataset_name):
+        print("\n" + "="*60)
+        print(f"STATISTICAL ANALYSIS: {dataset_name}")
+        print("="*60)
+
+        model_results = [
+            r for r in self.all_results
+            if r["dataset"] == dataset_name and r["condition"] == "Model"
+        ]
+
+        if not model_results:
+            print("No model results found.")
+            return
+
+        accuracies = [r["accuracy"] for r in model_results]
+        f1s = [r["f1_score"] for r in model_results]
+
+        print(f"\nMean Accuracy: {np.mean(accuracies):.3f} ± {np.std(accuracies):.3f}")
+        print(f"Mean F1-Score: {np.mean(f1s):.3f} ± {np.std(f1s):.3f}")
+
+    # --------------------------------------------------------
+    # AGGREGATED DOMAIN ANALYSIS
+    # --------------------------------------------------------
+    def generate_aggregated_domain_analysis(self, dataset_name):
+        print("\n" + "="*60)
+        print(f"AGGREGATED DOMAIN ANALYSIS: {dataset_name}")
+        print("="*60)
+
+        frames = [
+            df for key, df in self.run_data_storage.items()
+            if key.startswith(dataset_name)
+        ]
+
+        all_df = pd.concat(frames, ignore_index=True)
+
+        domains = sorted(all_df["domain"].unique())
+        summary = []
+
+        for dom in domains:
+            subset = all_df[all_df["domain"] == dom]
+
+            accuracy = accuracy_score(subset["label"], subset["prediction"])
+            precision = precision_score(subset["label"], subset["prediction"], average="macro")
+            recall = recall_score(subset["label"], subset["prediction"], average="macro")
+            f1 = f1_score(subset["label"], subset["prediction"], average="macro")
+
+            summary.append({
+                "domain": dom,
+                "accuracy": accuracy,
+                "precision": precision,
+                "recall": recall,
+                "f1": f1
+            })
+
+        df_summary = pd.DataFrame(summary)
+        outfile = f"{dataset_name.lower()}_domain_summary.csv"
+        df_summary.to_csv(outfile, index=False)
+        print(f"Saved domain summary to {outfile}")
+
+    # --------------------------------------------------------
+    # FINAL REPORT GENERATION
+    # --------------------------------------------------------
+    def generate_final_report(self):
+        print("\nGenerating final aggregated report...")
+
+        if not self.all_results:
+            print("No results to report.")
+            return
+
+        df_final = pd.DataFrame(self.all_results)
+        outfile = "final_aggregated_results.csv"
+        df_final.to_csv(outfile, index=False)
+        print(f"Saved final aggregated results to {outfile}")
