@@ -21,9 +21,9 @@ print(f"Experiment started: {datetime.now()}")
 # ------------------------------------------------------------
 
 CONFIG = {
-    "ugc_file": "/Users/vanessabelanger/Desktop/ugc_master_Ex.csv",
-    "ngc_file": "/Users/vanessabelanger/Desktop/ngc_master_Ex.csv",
-    "model_name": "gemma-3-4b",
+    "ugc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/UGC_Master_Ex.csv",
+    "ngc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/NGC_Master_Ex.csv",
+    "model_name": "llama-3.3-70b-instruct",
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,
     "random_seeds": [42, 123, 456, 789, 999]
@@ -52,7 +52,7 @@ class ThesisEvaluator:
         )
 
     # --------------------------------------------------------
-    # ZERO-SHOT CLASSIFIER (LLM CALL) let
+    # ZERO-SHOT CLASSIFIER (LLM CALL)
     # --------------------------------------------------------
 
     def classify_claim(self, claim, domain, run_id=0):
@@ -422,7 +422,7 @@ class ThesisEvaluator:
             })
 
         df_summary = pd.DataFrame(summary)
-        outfile = f"{dataset_name.lower()}_aggregated_domain_analysis.csv"
+        outfile = f"{dataset_name.lower()}_aggregated_domain_analysis_llama70b.csv"
         df_summary.to_csv(outfile, index=False)
         print(f"Saved aggregated domain analysis to {outfile}")
 
@@ -439,7 +439,7 @@ class ThesisEvaluator:
 
         df = pd.DataFrame(self.all_results)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        outfile = f"thesis_comprehensive_results_{timestamp}.csv"
+        outfile = f"llama70b_thesis_comprehensive_results_{timestamp}.csv"
         df.to_csv(outfile, index=False)
 
         print(f"Saved final comprehensive results to {outfile}")
