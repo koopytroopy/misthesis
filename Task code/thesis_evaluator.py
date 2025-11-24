@@ -23,7 +23,7 @@ print(f"Experiment started: {datetime.now()}")
 CONFIG = {
     "ugc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/UGC_Master_Ex.csv",
     "ngc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/NGC_Master_Ex.csv",
-    "model_name": "llama-3.3-70b-instruct",
+    "model_name": "gpt-oss-20b",
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,
     "random_seeds": [42, 123, 456, 789, 999]
@@ -41,15 +41,53 @@ class ThesisEvaluator:
         self.run_data_storage = {}
 
     # --------------------------------------------------------
-    # PROMPT BUILDER
+    # PROMPT BUILDER FS
     # --------------------------------------------------------
 
-    def generate_prompt(self, claim, domain):
-        return (
-            f"Classify the following {domain} claim as 'true' or 'false'. "
-            f"Respond with only one word (true/false).\n\n"
-            f"Claim: \"{claim}\"\nAnswer:"
-        )
+def generate_prompt(self, claim, domain, source):
+    return (
+        f"Classify the following {domain} claim from {source} content as true or false. "
+        f"Respond with ONLY one word: true or false.\n\n"
+
+        f"Examples:\n"
+        # Health
+        # User (social media)
+        f"Claim: \”Ignore the CDC, they want a new world order. Turmeric water cures covid instantly \"\n"
+        f"Structure: user\n\n"
+        f"Answer: false\n\n"
+
+        # News
+        f"Claim: \"CDC says vaccine reduces hospitalization risk.\"\n"
+        f"Structure: news\n\n"
+        f"Answer: true\n\n"
+
+        # -------- POLITICS --------
+        # User (social media)
+        f"Claim: \"Bro the PM literally said he's gonna declare martial law.\"\n"
+        f"Structure: user\n\n"
+        f"Answer: false\n\n"
+
+        # News
+        f"Claim: \"Trump announces new trade deal with China.\"\n"
+        f"Structure: news\n\n"
+        f"Answer: true\n\n"
+
+        # -------- WAR --------
+        # User (social media)
+        f"Claim: \”ok but fighter jets can stay in the air for 3 days straight without refuel fr fr\"\n"
+        f"Structure: user\n\n"
+        f"Answer: false\n\n"
+
+        # News
+        f"Claim: \"Allied forces conducted coordinated training exercises in the northern region.\"\n"
+        f"Structure: news\n\n"
+        f"Answer: true\n\n"
+
+        f"Now classify the following {domain} claim from {source} content.\n\n"
+        f"Claim: \"{claim}\"\n"
+        f"Answer:"
+    )
+
 
     # --------------------------------------------------------
     # ZERO-SHOT CLASSIFIER (LLM CALL)
@@ -422,7 +460,7 @@ class ThesisEvaluator:
             })
 
         df_summary = pd.DataFrame(summary)
-        outfile = f"{dataset_name.lower()}_aggregated_domain_analysis_llama70b.csv"
+        outfile = f"{dataset_name.lower()}_aggregated_domain_analysis_gptoss.csv"
         df_summary.to_csv(outfile, index=False)
         print(f"Saved aggregated domain analysis to {outfile}")
 
@@ -439,7 +477,7 @@ class ThesisEvaluator:
 
         df = pd.DataFrame(self.all_results)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        outfile = f"llama70b_thesis_comprehensive_results_{timestamp}.csv"
+        outfile = f"gptoss_thesis_comprehensive_results_{timestamp}.csv"
         df.to_csv(outfile, index=False)
 
         print(f"Saved final comprehensive results to {outfile}")
