@@ -1,0 +1,90 @@
+id,claim,domain,structure,label,Topic,prediction,random_baseline,majority_baseline,tfidf_baseline,run_id
+20145,"At least one in six abortions in the U.S., around 14,000 a month, were administered through telemedicine, with clinicians prescribing mail-order abortion pills after online consultations, the first nationwide count of telehealth abortions found. nyti.ms/3UXTSvb",1,NGC,1,Sexual/Gender Health,1.0,0,0,0,2
+20215,Trump's zero tolerance border policy lacks system for reuiniting familiies. ,2,NGC,1,Immigration,1.0,1,0,0,2
+20424,Russia's foreign minister says no Putin-Zelenskyy summit planned despite Trump's peace push,3,NGC,1,Ukraine/Russia,1.0,0,0,0,2
+20368,Israeli finance minister describes plans to turn Gaza into a 'real estate bonanza' as bombs hammer the enclave,3,NGC,1,Palestine/Isreal,1.0,0,0,0,2
+20371,Biden says he will stop sending bombs and artillery shells to Israel if it launches major invasion of Rafah,3,NGC,1,Palestine/Isreal,1.0,1,0,0,2
+20156,DISGUSTING: Children's Hospital of Pittsburgh is now putting out promotional videos on puberty blockers for kids.,1,NGC,0,Sexual/Gender Health,1.0,0,0,0,2
+20465,Gunman in Iran's capital fatally shoots 2 judges tied to 1988 mass executions,3,NGC,1,Iran,1.0,0,0,0,2
+20097,New Colorado policy legalizing fentanyl causes major spikes in overdose deaths,1,NGC,0,Drug Crisis,0.0,1,0,0,2
+20021,FDA: Coronavirus found in crab legs.,1,NGC,0,Covid,0.0,0,0,0,2
+20355,"Hamas needs more time to recover hostages' remains, U.S. advisers say as only nine of 28 bodies of slain abductees have been recovered. ",3,NGC,1,Palestine/Isreal,1.0,0,0,0,2
+20112,"HOW COOL IS THIS?! Scientists have discovered a new way to destroy cancer cells. By stimulating aminocyanine molecules with near-infrared light, cancer cells vibrate in sync, enough to break apart their membranes! These “molecular jackhammers” DESTROYED 99% of cancer cells!",1,NGC,1,Medicine/Public Health,0.0,0,0,0,2
+20037,Florida vaccination rates fall DRASTICALLY,1,NGC,1,Vaccines,0.0,1,0,0,2
+20348,Masked Israeli settlers attack Palestinian villages and IDF soldiers in the West Bank,3,NGC,1,Palestine/Isreal,1.0,1,0,0,2
+20077,Shocking new report finds nitazenes more deadly than fentanyl,1,NGC,1,Drug Crisis,1.0,0,0,0,2
+20189,Trump once called Jan. 6th a 'heinous attack.' Now he calls it a 'day of love.',2,NGC,1,Jan 6th,1.0,1,0,0,2
+20512,"Treason? Ilhan Omar Gives Iran Military Advice, Suggests It Could Target Trump Hotels",3,NGC,0,Iran,0.0,1,0,0,2
+20114,"Recent studies have linked UPFs such as ice-cream, fizzy drinks and ready meals to poor health, including an increased risk of cancer, weight gain and heart disease. Global consumption of the products is soaring and UPFs now make up more than half the average diet in the UK and US.
+
+#Health",1,NGC,1,Medicine/Public Health,1.0,1,0,0,2
+20311,"Breaking News: Prime Minister Viktor Orban of Hungary endorsed Sweden’s NATO membership after blocking it for 19 months, saying that the two countries are “ready to fight for each other.”",2,NGC,1,Global Politics,1.0,1,0,0,2
+20096,"US drug overdose deaths rise in 2024, according to new report",1,NGC,0,Drug Crisis,0.0,1,0,0,2
+20014,Research illustrates a clear correlation between vitamin D deficiencies and (higher) COVID-19 mortality rates.,1,NGC,1,Covid,1.0,1,0,0,2
+20025,Pentagon CONFIRMS coronavirus accidentally got into chemtrail supply train.,1,NGC,0,Covid,0.0,0,0,0,2
+20432,An E! News report said USAID paid millions of dollars to sponsor American celebrity visits to Ukraine.,3,NGC,0,Ukraine/Russia,1.0,1,0,0,2
+20168,"Planned Parenthood selling “viable nonanomalous” fetuses to University of California, San Diego for experimentation",1,NGC,0,Sexual/Gender Health,0.0,1,0,0,2
+20113,"REPORT: ""50 per cent of men between the ages of 50 and 60 are likely to have an enlarged prostate, the Prostate Cancer Foundation of Australia (PCFA) estimates. 
+
+Over the age of 70, the proportion reaches 80 per cent.""",1,NGC,1,Medicine/Public Health,1.0,0,0,0,2
+20010,New findings suggest Black people four times as likely to test positive for COVID-19,1,NGC,1,Covid,1.0,1,0,0,2
+20151,BREAKING: PP Pauses Emergency Funding for Abortion Acecess,1,NGC,1,Sexual/Gender Health,0.0,0,0,0,2
+20142,STUDY: 11.2% of late-term abortions in Quebec from 1989 to 2021 resulted in live births,1,NGC,1,Sexual/Gender Health,1.0,0,0,0,2
+20319,Columbia agrees to pay $200 million to restore funding cut by Trump administration,2,NGC,1,Global Politics,1.0,0,0,0,2
+20214,U.S. Customs and Border Protection reports show twice as many kids in Border Patrol custody under Biden than Trump peak in 2019. ,2,NGC,1,Immigration,1.0,1,0,0,2
+20139,"Scoop: Republicans are quietly delaying more than $1 billion in planned funding for a life-saving HIV program — demanding changes to terms like abortion, sexual reproductive health, even ""human rights"" in the program’s documents.",1,NGC,1,Sexual/Gender Health,1.0,1,0,0,2
+20399,REAKING: PM NETANYAHU HOSPITALISED. He suffered serious health issue in Kiryah and has been shifted to a hospital in Tel Aviv. Officials blame stress from Hamas attacks.,3,NGC,0,Palestine/Isreal,0.0,0,0,0,2
+20120,"MILESTONE: Cervical Cancer Rates Among Scottish Women Given HPV vaccine at 12-13 years of age, ZERO.",1,NGC,1,Medicine/Public Health,1.0,1,0,0,2
+20095,SHOCKING NEW REPORT: Sherrif dies from inhaling fentanyl at overdose scene,1,NGC,0,Drug Crisis,0.0,1,0,0,2
+20166,"POLITICIZED: Studies find abortion pill mifepristone dangerous, but medical journal retracts data ahead of Supreme Court hearing",1,NGC,0,Sexual/Gender Health,0.0,0,0,0,2
+20136,"RFK Jr. outs DARPA, says they are spraying the skies with chemicals that are in jet fuel.",1,NGC,0,Medicine/Public Health,0.0,1,0,0,2
+20456,Trump Calls Putin to Congratulate Him on Surviving Another Deep State Assassination Attempt,3,NGC,0,Ukraine/Russia,0.0,1,0,0,2
+20063,"The survival rate of COVID-19 is close to 100% without a vaccine, so what exactly will the purpose of the new vaccine be?",1,NGC,0,Vaccines,0.0,0,0,0,2
+20098,New York politicians now encouraging fentanyl use,1,NGC,0,Drug Crisis,0.0,0,0,0,2
+20119,"""Florida governor and presidential hopeful Ron DeSantis signed a bill Thursday that would allow for roads across Florida to be made with ‘radioactive’ mining waste that has been linked to cancer.""",1,NGC,1,Medicine/Public Health,0.0,0,0,0,2
+20506,"Zohran Mamdani, Favorite for New York Mayor, Has Ties to Pro-Hamas Networks and Allies of Iran, Cuba, and China, Analysts Warn",3,NGC,0,Iran,0.0,0,0,0,2
+20464,Russia and Iran sign a partnership treaty to deepen their ties in the face of Western sanctions,3,NGC,1,Iran,1.0,0,0,0,2
+20211,Rep. Paul Gosar asks Capitol Police to arrest illegal immigrants attending State of the Union ,2,NGC,1,Immigration,1.0,1,0,0,2
+20146,"NEW STUDY: 55% of respondents say it should be possible for a pregnant woman to obtain a legal abortion if she wants it for any reason. 86% of respondents support abortion access in the event of rape or incest. 
+89% support it when a woman’s health is seriously endangered by the pregnancy.",1,NGC,1,Sexual/Gender Health,1.0,0,0,0,2
+20033,The U.S. CDC quietly updated their numbers in August to show that only 6% of all coronavirus deaths were completely due to the coronavirus alone,1,NGC,0,Covid,1.0,1,0,0,2
+20411,"Power restored to 800,000 in Kyiv after Russian strikes on Ukraine's energy grid",3,NGC,1,Ukraine/Russia,1.0,1,0,0,2
+20073,"According to the CDC, Indianas drug overdose deaths rose 33% from 2019 to 2020.",1,NGC,1,Drug Crisis,1.0,0,0,0,2
+20094,DEA: Even small amount of fentanyl on skin can cause death,1,NGC,0,Drug Crisis,0.0,1,0,0,2
+20130,Miracle: Pfizer Announces They Just So Happened To Finish Monkeypox Vaccine,1,NGC,0,Medicine/Public Health,0.0,1,0,0,2
+20011,"Latinx people more vulnerable to COVID-19, US study finds",1,NGC,1,Covid,1.0,0,0,0,2
+20141,"Florida Republicans have introduced a new bill to effectively ban all abortions in the state, with an exception only for circumstances no doctor who is not also a lawyer could comply with. It explicitly bans all abortions for children who are rape victims www.flsenate.gov/Session/Bill...",1,NGC,1,Sexual/Gender Health,0.0,0,0,0,2
+20027,Michigan Governor Gretchen Whitmer bans buying US flags during lockdown.,1,NGC,0,Covid,0.0,1,0,0,2
+20092,NEW REPORT: Law enforcement personnel deaths from accidental fentanyl overdose surge in 2024. ,1,NGC,0,Drug Crisis,0.0,0,0,0,2
+20132,Olive oil antioxidant naturally kills all cancer cells tested within an hour,1,NGC,0,Medicine/Public Health,0.0,1,0,0,2
+20071,A federal judge in Ohio has sentenced an Illinois doctor to four life terms following his conviction in drug overdose deaths of 4 patients,1,NGC,1,Drug Crisis,1.0,0,0,0,2
+20418,Trump says he's ready to put 'major sanctions' on Russia if NATO nations do the same,3,NGC,1,Ukraine/Russia,1.0,1,0,0,2
+20144,The Texas Supreme Court reverses a lower court’s ruling that would’ve allowed a woman to obtain a legal abortion under a medical emergency exception. ,1,NGC,1,Sexual/Gender Health,1.0,1,0,0,2
+20109,CDC: Per- and polyfluoroalkyl substances (PFAS) found in blood of 97% of Americans. ,1,NGC,1,Medicine/Public Health,1.0,1,0,0,2
+20341,"U.S. police killed more people in just one month than the U.K.’s did in over a century, statistics show. ",2,NGC,0,Global Politics,1.0,1,0,0,2
+20514,Yemeni Armed Forces' spokesman Yahya Saree: Yemen vows to continue its attacks on Israel with missiles and drones until the aggression on Gaza stops.,3,NGC,0,Iran,1.0,0,0,0,2
+20090,New report: Fentanyl leading cause of death among teens and young adults.,1,NGC,0,Drug Crisis,1.0,1,0,0,2
+20101,"REPORT: In 2023, more than 105,000  teens died in U.S from fentanyl. ",1,NGC,0,Drug Crisis,0.0,1,0,0,2
+20255,"US minorities surpassed 25 percent of electorate when Obama ran in 2008, and it's going up.",2,NGC,1,Elections,1.0,1,0,0,2
+20028,Goodwill Industries International fires all employees due to coronavirus pandemic.,1,NGC,0,Covid,0.0,0,0,0,2
+20173,EXCLUSIVE: Trump has a new plan to save himself in a Jan 6 prosecution ... blame the whole thing on his insurrectionist lawyers https://www.rollingstone.com/politics/politics-features/donald-trump-jan6-jack-smith-rudy-giuliani-john-eastman-1234798826/,2,NGC,1,Jan 6th,0.0,0,0,0,2
+20495,"US Intelligence Fabricates New Claims to Justify Escalation Against Iran, Officials Say",3,NGC,0,Iran,0.0,1,0,0,2
+20282,JD Vance wrote the foreword for Project 2025’s Kevin Roberts’ upcoming book,2,NGC,1,Political Figures,1.0,0,0,0,2
+20507,Iran: Reward to Assassinate President Trump Rises – Jumps to $21 Million,3,NGC,0,Iran,1.0,1,0,0,2
+20000,People of Color Face Heightened Risks as COVID-19 Surges Again,1,NGC,1,Covid,1.0,0,0,0,2
+20397,North Korean President Kim Jong Un blames President Joe Biden for the Israel-Hamas war,3,NGC,0,Palestine/Isreal,0.0,1,0,0,2
+20041,STUDY: Risk of heart inflammation HIGHER from COVID infection than from vaccine. Myocarditis rates after vaccination now far below 2021 peaks.,1,NGC,1,Vaccines,1.0,1,0,0,2
+20502,Protesters hang banner depitcting Iran’s supreme leader from Brooklyn Museum,3,NGC,0,Iran,1.0,0,0,0,2
+20428,Ukraine suffers most civilian casualties in 3 years as Russia ramps up aerial attacks,3,NGC,1,Ukraine/Russia,1.0,1,0,0,2
+20123,Psaki Says Everyone Will Have To Show Proof Of Vaccination Before Receiving Free Crack Pipe,1,NGC,0,Medicine/Public Health,0.0,0,0,0,2
+20478,"Even after U.S. and Israeli strikes, Iran may still be able to build a nuclear weapon with hundreds of pounds of Iran's enriched uranium are still publicly unaccounted for.",3,NGC,1,Iran,1.0,0,0,0,2
+20135,BREAKING: American Cancer Society admits conventional cancer treatment causes more cancer,1,NGC,0,Medicine/Public Health,0.0,0,0,0,2
+20143,"Syphilis Is Killing Babies. The US is Failing to Stop the Disease From Spreading. The only drug to treat syphilis during pregnancy is in short supply. Untreated, syphilis can pass to newborns, killing them or leaving them w/ disabilities. As cases rise, the US isn’t doing much to prevent shortages.",1,NGC,1,Sexual/Gender Health,1.0,0,0,0,2
+20115,New: EPA Approved a Fuel Ingredient Even Though It Could Cause Cancer in Virtually Every Person Exposed Over a Lifetime. An EPA document shows that a new Chevron fuel ingredient has a lifetime cancer risk more than 1 million times higher than what the agency usually finds acceptable.,1,NGC,1,Medicine/Public Health,0.0,0,0,0,2
+20121,HEALTH EXCLUSIVE: Clinic Funded By Biden Administration Distributes Crack Pipes To Addicts Outside A ‚ÄòSchool‚Äô,1,NGC,0,Medicine/Public Health,0.0,0,0,0,2
+20088,Drug Overdoses Spike in Colorado After Legalization of Fentanyl,1,NGC,0,Drug Crisis,0.0,1,0,0,2
+20087,"SHOCKING REPORT: Teen Fentanyl Deaths Surge 350%, Linked to Open Borders",1,NGC,0,Drug Crisis,0.0,0,0,0,2
+20078,British Columbia to recriminalize use of drugs in public spaces,1,NGC,1,Drug Crisis,1.0,0,0,0,2
+20196,"Former President Donald Trump asked ""for troops around the Capitol"" on Jan. 6, 2021, but was ""turned down by the Democrats.""",2,NGC,0,Jan 6th,0.0,1,0,0,2
+20043,7 large observational studies found no increased risk of miscarriage or stillbirth with COVID vaccination during pregnancy. ,1,NGC,1,Vaccines,1.0,0,0,0,2
+20251,"Texas Democrat calls mail-in ballot fraud the ""great source of voter fraud in this state.""",2,NGC,1,Elections,1.0,0,0,0,2
