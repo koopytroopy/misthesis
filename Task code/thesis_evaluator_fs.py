@@ -12,7 +12,7 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings("ignore")
 
-print("Thesis Misinformation Testing")
+print("Thesis Misinformation Testing - True Few-Shot Learning")
 print(f"Experiment started: {datetime.now()}")
 
 # ------------------------------------------------------------
@@ -21,10 +21,12 @@ print(f"Experiment started: {datetime.now()}")
 CONFIG = {
     "ugc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/UGC_Master_Ex.csv",
     "ngc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/NGC_Master_Ex.csv",
-    "model_name": "gpt-oss-20b",
+    "model_name": "llama-3.3-70b-instruct",
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,
-    "random_seeds": [42, 123, 456, 789, 999]
+    "random_seeds": [42, 123, 456, 789, 999],
+    "n_shot": 8,  # Number of examples to use for few-shot learning
+    "example_selection": "stratified"  # Options: "stratified", "random", "balanced"
 }
 
 # ------------------------------------------------------------
@@ -35,59 +37,108 @@ class ThesisEvaluator:
         self.config = config
         self.all_results = []
         self.run_data_storage = {}
+        self.train_examples_cache = {}
 
     # --------------------------------------------------------
-    # PROMPT BUILDER WITH FEW-SHOT EXAMPLES
+    # SELECT FEW-SHOT EXAMPLES FROM TRAINING DATA
     # --------------------------------------------------------
-    def generate_prompt(self, claim, domain, structure="user"):
-        return (
+    def select_few_shot_examples(self, train_df, n_examples=8, method="stratified", random_state=42):
+        """
+        Select few-shot examples from training data.
+        
+        Args:
+            train_df: Training dataframe
+            n_examples: Number of examples to select
+            method: Selection strategy ('stratified', 'random', 'balanced')
+            random_state: Random seed for reproducibility
+        """
+        np.random.seed(random_state)
+        
+        if method == "stratified":
+            # Ensure representation across all domain × label combinations
+            examples = []
+            
+            # Get unique combinations
+            combinations = train_df.groupby(['domain', 'label'])
+            n_combinations = len(combinations)
+            examples_per_combo = max(1, n_examples // n_combinations)
+            
+            for (domain, label), group in combinations:
+                # Sample from each combination
+                n_sample = min(examples_per_combo, len(group))
+                sampled = group.sample(n=n_sample, random_state=random_state)
+                examples.append(sampled)
+            
+            result = pd.concat(examples, ignore_index=True)
+            
+            # If we need more examples, randomly sample additional ones
+            if len(result) < n_examples:
+                remaining = n_examples - len(result)
+                additional = train_df[~train_df.index.isin(result.index)].sample(
+                    n=min(remaining, len(train_df) - len(result)),
+                    random_state=random_state
+                )
+                result = pd.concat([result, additional], ignore_index=True)
+            
+            # If we have too many, randomly reduce
+            if len(result) > n_examples:
+                result = result.sample(n=n_examples, random_state=random_state)
+                
+        elif method == "balanced":
+            # Equal number of true and false examples
+            true_examples = train_df[train_df['label'] == 1].sample(
+                n=min(n_examples // 2, len(train_df[train_df['label'] == 1])),
+                random_state=random_state
+            )
+            false_examples = train_df[train_df['label'] == 0].sample(
+                n=min(n_examples // 2, len(train_df[train_df['label'] == 0])),
+                random_state=random_state
+            )
+            result = pd.concat([true_examples, false_examples], ignore_index=True)
+            
+        else:  # random
+            result = train_df.sample(n=min(n_examples, len(train_df)), random_state=random_state)
+        
+        return result.reset_index(drop=True)
+
+    # --------------------------------------------------------
+    # PROMPT BUILDER WITH DYNAMIC FEW-SHOT EXAMPLES
+    # --------------------------------------------------------
+    def generate_prompt(self, claim, domain, structure, few_shot_examples):
+        """
+        Generate prompt with few-shot examples from training data.
+        """
+        prompt = (
             f"Classify the following {domain} claim from {structure} content as true or false. "
             f"Respond with ONLY one word: true or false.\n\n"
-
             f"Examples:\n"
-            # Health - User
-            f"Claim: \"Ignore the CDC, they want a new world order. Turmeric water cures covid instantly\"\n"
-            f"Structure: user\n"
-            f"Answer: false\n\n"
-
-            # Health - News
-            f"Claim: \"CDC says vaccine reduces hospitalization risk.\"\n"
-            f"Structure: news\n"
-            f"Answer: true\n\n"
-
-            # Politics - User
-            f"Claim: \"Bro the PM literally said he's gonna declare martial law.\"\n"
-            f"Structure: user\n"
-            f"Answer: false\n\n"
-
-            # Politics - News
-            f"Claim: \"Trump announces new trade deal with China.\"\n"
-            f"Structure: news\n"
-            f"Answer: true\n\n"
-
-            # War - User
-            f"Claim: \"ok but fighter jets can stay in the air for 3 days straight without refuel fr fr\"\n"
-            f"Structure: user\n"
-            f"Answer: false\n\n"
-
-            # War - News
-            f"Claim: \"Allied forces conducted coordinated training exercises in the northern region.\"\n"
-            f"Structure: news\n"
-            f"Answer: true\n\n"
-
-            f"Now classify the following {domain} claim from {structure} content.\n\n"
-            f"Claim: \"{claim}\"\n"
-            f"Answer:"
         )
+        
+        # Add few-shot examples from training data
+        for idx, row in few_shot_examples.iterrows():
+            example_claim = row['claim']
+            example_structure = row.get('structure', 'user')
+            example_label = 'true' if row['label'] == 1 else 'false'
+            
+            prompt += f"Claim: \"{example_claim}\"\n"
+            prompt += f"Structure: {example_structure}\n"
+            prompt += f"Answer: {example_label}\n\n"
+        
+        # Add the test claim
+        prompt += f"Now classify the following {domain} claim from {structure} content.\n\n"
+        prompt += f"Claim: \"{claim}\"\n"
+        prompt += f"Answer:"
+        
+        return prompt
 
     # --------------------------------------------------------
     # ZERO-SHOT / FEW-SHOT CLASSIFIER
     # --------------------------------------------------------
-    def classify_claim(self, claim, domain, structure="user", run_id=0):
+    def classify_claim(self, claim, domain, structure, few_shot_examples, run_id=0):
         if pd.isna(claim) or not isinstance(claim, str):
             return None
 
-        prompt = self.generate_prompt(claim, domain, structure)
+        prompt = self.generate_prompt(claim, domain, structure, few_shot_examples)
 
         try:
             response = requests.post(
@@ -236,7 +287,7 @@ class ThesisEvaluator:
         print(f"F1-Score: {f1:.2f}")
         print("\nConfusion Matrix:")
         print(confusion_matrix(df_clean["label"], df_clean["prediction"]))
-        print(f"Cohen’s Kappa: {cohen_kappa_score(df_clean['label'], df_clean['prediction']):.2f}")
+        print(f"Cohen's Kappa: {cohen_kappa_score(df_clean['label'], df_clean['prediction']):.2f}")
         print(f"MCC: {matthews_corrcoef(df_clean['label'], df_clean['prediction']):.2f}")
 
     # --------------------------------------------------------
@@ -316,14 +367,28 @@ class ThesisEvaluator:
 
         train_df, test_df = self.create_stratified_split(df, test_size=0.3, random_state=seed)
 
+        # Select few-shot examples from training data
+        print(f"\nSelecting {self.config['n_shot']} few-shot examples using '{self.config['example_selection']}' strategy...")
+        few_shot_examples = self.select_few_shot_examples(
+            train_df, 
+            n_examples=self.config['n_shot'],
+            method=self.config['example_selection'],
+            random_state=seed
+        )
+        
+        print(f"Few-shot examples selected:")
+        print(few_shot_examples.groupby(['domain', 'label']).size().unstack(fill_value=0))
+
         print(f"\nProcessing {len(test_df)} test claims...")
 
         predictions = []
         for i, row in enumerate(test_df.itertuples(), 1):
             if i % 25 == 0:
                 print(f"Processing {i}/{len(test_df)}")
+            claim = getattr(row, "claim")
+            domain = getattr(row, "domain")
             structure = getattr(row, "structure", "user")
-            pred = self.classify_claim(getattr(row, "claim"), getattr(row, "domain"), structure, run_id)
+            pred = self.classify_claim(claim, domain, structure, few_shot_examples, run_id)
             predictions.append(pred)
             sleep(0.1)
 
@@ -373,9 +438,14 @@ class ThesisEvaluator:
         # Save run results
         self.run_data_storage[f"{dataset_name}_run_{run_id}"] = df_clean
 
-        outfile = f"{dataset_name.lower()}_run_{run_id+1}_results.csv"
+        outfile = f"{dataset_name.lower()}_run_{run_id+1}_results_llama70bFS.csv"
         df_clean.to_csv(outfile, index=False)
         print(f"Saved results to {outfile}")
+        
+        # Save few-shot examples used
+        few_shot_outfile = f"{dataset_name.lower()}_run_{run_id+1}_fewshot_examples_llama70bFS.csv"
+        few_shot_examples.to_csv(few_shot_outfile, index=False)
+        print(f"Saved few-shot examples to {few_shot_outfile}")
 
         return df_clean
 
@@ -387,6 +457,7 @@ class ThesisEvaluator:
             ugc_df, ngc_df = self.clean_datasets()
 
             print(f"\nFinal datasets loaded: UGC={len(ugc_df)}, NGC={len(ngc_df)}")
+            print(f"Few-shot configuration: {self.config['n_shot']} examples, {self.config['example_selection']} selection")
 
             for run_id in range(self.config["n_runs"]):
                 print("\n" + "#"*60)
@@ -438,6 +509,7 @@ class ThesisEvaluator:
 
         return ugc, ngc
 
+    # --------------------------------------------------------
     # STATISTICAL ANALYSIS
     # --------------------------------------------------------
     def perform_statistical_analysis(self, dataset_name):
@@ -495,7 +567,7 @@ class ThesisEvaluator:
             })
 
         df_summary = pd.DataFrame(summary)
-        outfile = f"{dataset_name.lower()}_domain_summary.csv"
+        outfile = f"{dataset_name.lower()}_domain_summary_llama70bFS.csv"
         df_summary.to_csv(outfile, index=False)
         print(f"Saved domain summary to {outfile}")
 
@@ -510,6 +582,14 @@ class ThesisEvaluator:
             return
 
         df_final = pd.DataFrame(self.all_results)
-        outfile = "final_aggregated_results.csv"
+        outfile = "final_aggregated_results_llama70bFS.csv"
         df_final.to_csv(outfile, index=False)
         print(f"Saved final aggregated results to {outfile}")
+        return df_final
+
+# --------------------------------------------------------
+# MAIN EXECUTION
+# --------------------------------------------------------
+if __name__ == "__main__":
+    evaluator = ThesisEvaluator(CONFIG)
+    evaluator.run_complete_evaluation()
