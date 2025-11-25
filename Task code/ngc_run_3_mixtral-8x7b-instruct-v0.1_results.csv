@@ -1,0 +1,162 @@
+id,claim,domain,structure,label,Topic,prediction,random_baseline,majority_baseline,tfidf_baseline,run_id
+20145,"At least one in six abortions in the U.S., around 14,000 a month, were administered through telemedicine, with clinicians prescribing mail-order abortion pills after online consultations, the first nationwide count of telehealth abortions found. nyti.ms/3UXTSvb",1,NGC,1,Sexual/Gender Health,1,0,0,0,2
+20215,Trump's zero tolerance border policy lacks system for reuiniting familiies. ,2,NGC,1,Immigration,1,1,0,0,2
+20414,Russia launches deadly aerial attack on Ukraine as Poland scrambles jets,3,NGC,1,Ukraine/Russia,1,0,0,0,2
+20424,Russia's foreign minister says no Putin-Zelenskyy summit planned despite Trump's peace push,3,NGC,1,Ukraine/Russia,1,0,0,0,2
+20368,Israeli finance minister describes plans to turn Gaza into a 'real estate bonanza' as bombs hammer the enclave,3,NGC,1,Palestine/Isreal,1,0,0,0,2
+20371,Biden says he will stop sending bombs and artillery shells to Israel if it launches major invasion of Rafah,3,NGC,1,Palestine/Isreal,0,1,0,0,2
+20299,Hillary Clinton leaves country as Mueller indictment is announceed,2,NGC,0,Political Figures,0,0,0,0,2
+20156,DISGUSTING: Children's Hospital of Pittsburgh is now putting out promotional videos on puberty blockers for kids.,1,NGC,0,Sexual/Gender Health,0,0,0,0,2
+20465,Gunman in Iran's capital fatally shoots 2 judges tied to 1988 mass executions,3,NGC,1,Iran,1,0,0,0,2
+20097,New Colorado policy legalizing fentanyl causes major spikes in overdose deaths,1,NGC,0,Drug Crisis,0,1,0,0,2
+20021,FDA: Coronavirus found in crab legs.,1,NGC,0,Covid,0,0,0,0,2
+20355,"Hamas needs more time to recover hostages' remains, U.S. advisers say as only nine of 28 bodies of slain abductees have been recovered. ",3,NGC,1,Palestine/Isreal,0,0,0,0,2
+20222,Bernie Sanders Praises Trump’s Job on Securing Border,2,NGC,1,Immigration,0,0,0,0,2
+20112,"HOW COOL IS THIS?! Scientists have discovered a new way to destroy cancer cells. By stimulating aminocyanine molecules with near-infrared light, cancer cells vibrate in sync, enough to break apart their membranes! These “molecular jackhammers” DESTROYED 99% of cancer cells!",1,NGC,1,Medicine/Public Health,0,0,0,0,2
+20405,Russian strikes on Kyiv kill at least 4 people and wound 16,3,NGC,1,Ukraine/Russia,1,1,0,0,2
+20309,"Nancy Pelosi's Son Paul Jr. Was Exec at 'Ukraine-Based Gas Company,' Similar to Hunter Biden",2,NGC,0,Political Figures,0,0,0,0,2
+20037,Florida vaccination rates fall DRASTICALLY,1,NGC,1,Vaccines,0,1,0,0,2
+20213,Federal data shows Barack Obama deported more people in each of his terms than Trump.,2,NGC,1,Immigration,1,1,0,0,2
+20348,Masked Israeli settlers attack Palestinian villages and IDF soldiers in the West Bank,3,NGC,1,Palestine/Isreal,1,1,0,0,2
+20077,Shocking new report finds nitazenes more deadly than fentanyl,1,NGC,1,Drug Crisis,0,0,0,0,2
+20291,Trump asked Comey to end investigation of Michael Flynn probe: report,2,NGC,1,Political Figures,1,1,0,0,2
+20238,BREAKING: Rep. Maxine Waters calls for the United States to grant citizenship to every undocumented protester in Los Angeles 2025 protests.,2,NGC,0,Immigration,0,0,0,0,2
+20335,Canada makes bold decision to shut down Tesla and the US auto industry.,2,NGC,0,Global Politics,0,1,0,0,2
+20189,Trump once called Jan. 6th a 'heinous attack.' Now he calls it a 'day of love.',2,NGC,1,Jan 6th,1,1,0,0,2
+20512,"Treason? Ilhan Omar Gives Iran Military Advice, Suggests It Could Target Trump Hotels",3,NGC,0,Iran,0,1,0,0,2
+20114,"Recent studies have linked UPFs such as ice-cream, fizzy drinks and ready meals to poor health, including an increased risk of cancer, weight gain and heart disease. Global consumption of the products is soaring and UPFs now make up more than half the average diet in the UK and US.
+
+#Health",1,NGC,1,Medicine/Public Health,1,1,0,0,2
+20311,"Breaking News: Prime Minister Viktor Orban of Hungary endorsed Sweden’s NATO membership after blocking it for 19 months, saying that the two countries are “ready to fight for each other.”",2,NGC,1,Global Politics,0,1,0,0,2
+20243,"In Georgia, it's illegal to give people water within 150 feet of a polling place and punishable by up to a year in prison.",2,NGC,1,Elections,1,1,0,0,2
+20096,"US drug overdose deaths rise in 2024, according to new report",1,NGC,0,Drug Crisis,0,1,0,0,2
+20014,Research illustrates a clear correlation between vitamin D deficiencies and (higher) COVID-19 mortality rates.,1,NGC,1,Covid,1,1,0,0,2
+20389,SCOOP: Ben & Jerry’s now selling “Free Palestine” and “From the River to Sea” ice cream flavors.,3,NGC,0,Palestine/Isreal,0,0,0,0,2
+20025,Pentagon CONFIRMS coronavirus accidentally got into chemtrail supply train.,1,NGC,0,Covid,0,0,0,0,2
+20432,An E! News report said USAID paid millions of dollars to sponsor American celebrity visits to Ukraine.,3,NGC,0,Ukraine/Russia,1,1,0,0,2
+20275,BOMBSHELL: California Has 1.8M More Registered Voters Than it Should,2,NGC,0,Elections,1,1,0,0,2
+20168,"Planned Parenthood selling “viable nonanomalous” fetuses to University of California, San Diego for experimentation",1,NGC,0,Sexual/Gender Health,0,1,0,0,2
+20113,"REPORT: ""50 per cent of men between the ages of 50 and 60 are likely to have an enlarged prostate, the Prostate Cancer Foundation of Australia (PCFA) estimates. 
+
+Over the age of 70, the proportion reaches 80 per cent.""",1,NGC,1,Medicine/Public Health,1,0,0,0,2
+20010,New findings suggest Black people four times as likely to test positive for COVID-19,1,NGC,1,Covid,1,1,0,0,2
+20351,American-Israeli's body among 3 returned by Hamas,3,NGC,1,Palestine/Isreal,0,0,0,0,2
+20151,BREAKING: PP Pauses Emergency Funding for Abortion Acecess,1,NGC,1,Sexual/Gender Health,0,0,0,0,2
+20298,Military ARRESTS Hunter Biden!,2,NGC,0,Political Figures,0,0,0,0,2
+20142,STUDY: 11.2% of late-term abortions in Quebec from 1989 to 2021 resulted in live births,1,NGC,1,Sexual/Gender Health,1,0,0,0,2
+20319,Columbia agrees to pay $200 million to restore funding cut by Trump administration,2,NGC,1,Global Politics,0,0,0,0,2
+20214,U.S. Customs and Border Protection reports show twice as many kids in Border Patrol custody under Biden than Trump peak in 2019. ,2,NGC,1,Immigration,1,1,0,0,2
+20240,ICE announces pause to undocummented immigrant hotline because 90% of the calls are from people reporting Elon Musk.,2,NGC,0,Immigration,0,1,0,0,2
+20139,"Scoop: Republicans are quietly delaying more than $1 billion in planned funding for a life-saving HIV program — demanding changes to terms like abortion, sexual reproductive health, even ""human rights"" in the program’s documents.",1,NGC,1,Sexual/Gender Health,0,1,0,0,2
+20494,Trump's confession on Iran war proves Israel is merely a US military outpost in West Asia,3,NGC,0,Iran,0,1,0,0,2
+20237,"BREAKING: Home Depot signed a $250 million deal with DHS, allowing ICE agents to stake out their parking lots and arrest immigrants.",2,NGC,0,Immigration,0,1,0,0,2
+20399,REAKING: PM NETANYAHU HOSPITALISED. He suffered serious health issue in Kiryah and has been shifted to a hospital in Tel Aviv. Officials blame stress from Hamas attacks.,3,NGC,0,Palestine/Isreal,0,0,0,0,2
+20333,"Biden Sent $60,000 to U.K. For Pride Events — Trump Made $5 Billion in Trade Wins",2,NGC,0,Global Politics,0,1,0,0,2
+20120,"MILESTONE: Cervical Cancer Rates Among Scottish Women Given HPV vaccine at 12-13 years of age, ZERO.",1,NGC,1,Medicine/Public Health,0,1,0,0,2
+20453,"Biden-Funded Ukrainian Military Tortures, Kills, and EATS Innocent Russian Civilians",3,NGC,0,Ukraine/Russia,0,0,0,0,2
+20095,SHOCKING NEW REPORT: Sherrif dies from inhaling fentanyl at overdose scene,1,NGC,0,Drug Crisis,0,1,0,0,2
+20166,"POLITICIZED: Studies find abortion pill mifepristone dangerous, but medical journal retracts data ahead of Supreme Court hearing",1,NGC,0,Sexual/Gender Health,0,0,0,0,2
+20136,"RFK Jr. outs DARPA, says they are spraying the skies with chemicals that are in jet fuel.",1,NGC,0,Medicine/Public Health,0,1,0,0,2
+20289,"Alabama governor, caught in affair, agrees to plea deal and resigns",2,NGC,1,Political Figures,1,0,0,0,2
+20349,Israel returns 15 bodies to Gaza after hostage remains are identified,3,NGC,1,Palestine/Isreal,1,1,0,0,2
+20456,Trump Calls Putin to Congratulate Him on Surviving Another Deep State Assassination Attempt,3,NGC,0,Ukraine/Russia,0,1,0,0,2
+20063,"The survival rate of COVID-19 is close to 100% without a vaccine, so what exactly will the purpose of the new vaccine be?",1,NGC,0,Vaccines,0,0,0,0,2
+20278,New York Times editor admits Biden sexual assault story was censored at behest of Biden campaign.,2,NGC,1,Political Figures,0,0,0,0,2
+20098,New York politicians now encouraging fentanyl use,1,NGC,0,Drug Crisis,0,0,0,0,2
+20119,"""Florida governor and presidential hopeful Ron DeSantis signed a bill Thursday that would allow for roads across Florida to be made with ‘radioactive’ mining waste that has been linked to cancer.""",1,NGC,1,Medicine/Public Health,0,0,0,0,2
+20199,"TUCKER CARLSON: Federal agents directly incited people on Jan. 6, 2021, and ""intentionally entrapped"" American citizens.",2,NGC,0,Jan 6th,0,0,0,0,2
+20221,DHS announces end to family separation policy at southern border.,2,NGC,1,Immigration,1,0,0,0,2
+20506,"Zohran Mamdani, Favorite for New York Mayor, Has Ties to Pro-Hamas Networks and Allies of Iran, Cuba, and China, Analysts Warn",3,NGC,0,Iran,0,0,0,0,2
+20464,Russia and Iran sign a partnership treaty to deepen their ties in the face of Western sanctions,3,NGC,1,Iran,1,0,0,0,2
+20211,Rep. Paul Gosar asks Capitol Police to arrest illegal immigrants attending State of the Union ,2,NGC,1,Immigration,1,1,0,0,2
+20334,TRUMP: US trade deficit with China is $1 trillion,2,NGC,0,Global Politics,0,1,0,0,2
+20146,"NEW STUDY: 55% of respondents say it should be possible for a pregnant woman to obtain a legal abortion if she wants it for any reason. 86% of respondents support abortion access in the event of rape or incest. 
+89% support it when a woman’s health is seriously endangered by the pregnancy.",1,NGC,1,Sexual/Gender Health,1,0,0,0,2
+20033,The U.S. CDC quietly updated their numbers in August to show that only 6% of all coronavirus deaths were completely due to the coronavirus alone,1,NGC,0,Covid,0,1,0,0,2
+20381,Nikki Haley argues in support of bringing Gaza refugees to America.,3,NGC,0,Palestine/Isreal,0,1,0,0,2
+20374,WHOOPS: Israel accidentally votes for Palestine at United Nations Security Council meeting.,3,NGC,0,Palestine/Isreal,0,1,0,0,2
+20411,"Power restored to 800,000 in Kyiv after Russian strikes on Ukraine's energy grid",3,NGC,1,Ukraine/Russia,1,1,0,0,2
+20073,"According to the CDC, Indianas drug overdose deaths rose 33% from 2019 to 2020.",1,NGC,1,Drug Crisis,1,0,0,0,2
+20094,DEA: Even small amount of fentanyl on skin can cause death,1,NGC,0,Drug Crisis,1,1,0,0,2
+20191,"NEW: Former President Joe Biden Pardons Michael Byrd, Jan. 6th insurrectionist",2,NGC,0,Jan 6th,0,0,0,0,2
+20379,The Associated Press and CNN admit they knew about Hamas’ Oct. 7 attack beforehand,3,NGC,0,Palestine/Isreal,0,1,0,0,2
+20130,Miracle: Pfizer Announces They Just So Happened To Finish Monkeypox Vaccine,1,NGC,0,Medicine/Public Health,0,1,0,0,2
+20332,Germany Admits Trump Was Right on Borders After Taking in One Million Syrian Refugees,2,NGC,0,Global Politics,0,1,0,0,2
+20011,"Latinx people more vulnerable to COVID-19, US study finds",1,NGC,1,Covid,1,0,0,0,2
+20195,"Scoop: Freedom of Information Act reveals dozens of phone calls between Ray Epps and Nancy Pelosi in the week before Jan. 6th, 2021.",2,NGC,0,Jan 6th,0,1,0,0,2
+20483,"Pelosi: Until the new Iran deal, China and Russia have never voted with us at the U.N. on any sanctions on Iran in the past.",3,NGC,1,Iran,0,0,0,0,2
+20342,The United Nations replaces all 193 country flags with LGBT flags.,2,NGC,0,Global Politics,0,1,0,0,2
+20141,"Florida Republicans have introduced a new bill to effectively ban all abortions in the state, with an exception only for circumstances no doctor who is not also a lawyer could comply with. It explicitly bans all abortions for children who are rape victims www.flsenate.gov/Session/Bill...",1,NGC,1,Sexual/Gender Health,0,0,0,0,2
+20027,Michigan Governor Gretchen Whitmer bans buying US flags during lockdown.,1,NGC,0,Covid,0,1,0,0,2
+20092,NEW REPORT: Law enforcement personnel deaths from accidental fentanyl overdose surge in 2024. ,1,NGC,0,Drug Crisis,0,0,0,0,2
+20323,Turkey says two-state solution is most realistic option for Cyprus,2,NGC,1,Global Politics,1,0,0,0,2
+20132,Olive oil antioxidant naturally kills all cancer cells tested within an hour,1,NGC,0,Medicine/Public Health,0,1,0,0,2
+20071,A federal judge in Ohio has sentenced an Illinois doctor to four life terms following his conviction in drug overdose deaths of 4 patients,1,NGC,1,Drug Crisis,1,0,0,0,2
+20362,Israel intercepts aid flotilla bound for Gaza,3,NGC,1,Palestine/Isreal,1,1,0,0,2
+20295,BREAKING: Hunter Biden DIES of Crack Overdose,2,NGC,0,Political Figures,0,1,0,0,2
+20418,Trump says he's ready to put 'major sanctions' on Russia if NATO nations do the same,3,NGC,1,Ukraine/Russia,1,1,0,0,2
+20459,Obama will start Iran war for vote': Trump's 2011 post resurfaces on internet.,3,NGC,1,Iran,0,1,0,0,2
+20190,"Video shows Nancy Pelosi saying, ""I've given a shoot-to-kill order for any breach of the speaker's lobby,"" on Jan. 6, 2021.",2,NGC,0,Jan 6th,0,1,0,0,2
+20144,The Texas Supreme Court reverses a lower court’s ruling that would’ve allowed a woman to obtain a legal abortion under a medical emergency exception. ,1,NGC,1,Sexual/Gender Health,1,1,0,0,2
+20109,CDC: Per- and polyfluoroalkyl substances (PFAS) found in blood of 97% of Americans. ,1,NGC,1,Medicine/Public Health,1,1,0,0,2
+20500,"CIA Source Reveals Iran Controls Secret Army of 200,000 Fighters Across the Middle East.",3,NGC,0,Iran,0,1,0,0,2
+20330," Russians Mint ‘In Trump We Trust’ Coin To Commemorate U.S. Inauguration (IMAGE, VIDEO)",2,NGC,0,Global Politics,0,1,0,0,2
+20366,U.S. vetoes U.N. Security Council resolution demanding immediate Gaza ceasefire and hostage release,3,NGC,1,Palestine/Isreal,0,1,0,0,2
+20341,"U.S. police killed more people in just one month than the U.K.’s did in over a century, statistics show. ",2,NGC,0,Global Politics,1,1,0,0,2
+20377,MSNBC airs Gaza 'crisis actor.,3,NGC,0,Palestine/Isreal,0,0,0,0,2
+20514,Yemeni Armed Forces' spokesman Yahya Saree: Yemen vows to continue its attacks on Israel with missiles and drones until the aggression on Gaza stops.,3,NGC,0,Iran,0,0,0,0,2
+20321,UK recognizes a Palestinian state despite opposition from the U.S. and Israel,2,NGC,1,Global Politics,1,1,0,0,2
+20383,89% of Palestinians Support Terror Attacks on Israel – Democrats Want to Bring One Million to the US,3,NGC,0,Palestine/Isreal,0,1,0,0,2
+20090,New report: Fentanyl leading cause of death among teens and young adults.,1,NGC,0,Drug Crisis,0,1,0,0,2
+20101,"REPORT: In 2023, more than 105,000  teens died in U.S from fentanyl. ",1,NGC,0,Drug Crisis,0,1,0,0,2
+20303,SHOCKING: Justin Trudeau’s plane found filled with cocaine as he lands in India for the G20 summit.,2,NGC,0,Political Figures,0,1,0,0,2
+20471,"Iran must 'walk away' from all uranium enrichment, Marco Rubio says",3,NGC,1,Iran,1,1,0,0,2
+20331," Trudeau HUMILIATES Trump, Openly Prefers To Speak To Other U.S. Officials Instead",2,NGC,0,Global Politics,0,1,0,0,2
+20255,"US minorities surpassed 25 percent of electorate when Obama ran in 2008, and it's going up.",2,NGC,1,Elections,1,1,0,0,2
+20028,Goodwill Industries International fires all employees due to coronavirus pandemic.,1,NGC,0,Covid,0,0,0,0,2
+20427,Zelenskyy rejects Trump's proposal that Ukraine could swap territories with Russia,3,NGC,1,Ukraine/Russia,1,1,0,0,2
+20173,EXCLUSIVE: Trump has a new plan to save himself in a Jan 6 prosecution ... blame the whole thing on his insurrectionist lawyers https://www.rollingstone.com/politics/politics-features/donald-trump-jan6-jack-smith-rudy-giuliani-john-eastman-1234798826/,2,NGC,1,Jan 6th,0,0,0,0,2
+20495,"US Intelligence Fabricates New Claims to Justify Escalation Against Iran, Officials Say",3,NGC,0,Iran,0,1,0,0,2
+20354,"
+Israel says ceasefire back on after strikes kill more than 100 in Gaza",3,NGC,1,Palestine/Isreal,1,1,0,0,2
+20282,JD Vance wrote the foreword for Project 2025’s Kevin Roberts’ upcoming book,2,NGC,1,Political Figures,0,0,0,0,2
+20507,Iran: Reward to Assassinate President Trump Rises – Jumps to $21 Million,3,NGC,0,Iran,0,1,0,0,2
+20000,People of Color Face Heightened Risks as COVID-19 Surges Again,1,NGC,1,Covid,1,0,0,0,2
+20219,Trump administration implements 'Remain in Mexico' policy requiring asylum seekers to wait across border,2,NGC,1,Immigration,1,1,0,0,2
+20397,North Korean President Kim Jong Un blames President Joe Biden for the Israel-Hamas war,3,NGC,0,Palestine/Isreal,0,1,0,0,2
+20407,Trump puts Putin talks on hold as Kremlin launches deadly new attacks on Ukraine,3,NGC,1,Ukraine/Russia,1,0,0,0,2
+20452,White Hats Confirm Lloyd Austin Killed in Ukraine,3,NGC,0,Ukraine/Russia,0,1,0,0,2
+20232,California To Register Illegal Aliens To Vote - Automatically. ,2,NGC,0,Immigration,0,0,0,0,2
+20041,STUDY: Risk of heart inflammation HIGHER from COVID infection than from vaccine. Myocarditis rates after vaccination now far below 2021 peaks.,1,NGC,1,Vaccines,1,1,0,0,2
+20434,Zelenskyy's statement about Ukraine aid reveals $177 billion dollar money laundering operation ,3,NGC,0,Ukraine/Russia,0,0,0,0,2
+20502,Protesters hang banner depitcting Iran’s supreme leader from Brooklyn Museum,3,NGC,0,Iran,0,0,0,0,2
+20201,NEW: Trump signs Insurrection Act - General Flynn to be appointed vice president. ,2,NGC,0,Jan 6th,0,1,0,0,2
+20428,Ukraine suffers most civilian casualties in 3 years as Russia ramps up aerial attacks,3,NGC,1,Ukraine/Russia,1,1,0,0,2
+20123,Psaki Says Everyone Will Have To Show Proof Of Vaccination Before Receiving Free Crack Pipe,1,NGC,0,Medicine/Public Health,0,0,0,0,2
+20402,Trump puts onus on Zelenskyy to end conflict with Russia ahead of meeting,3,NGC,1,Ukraine/Russia,1,1,0,0,2
+20245,North Carolina is in the small minority of states that requires an absentee ballot to be signed by two witnesses or a notary public.,2,NGC,1,Elections,1,1,0,0,2
+20315,Nobel Peace Prize awarded to Venezuela’s María Corina Machado,2,NGC,1,Global Politics,0,1,0,0,2
+20413,U.S. to expand intelligence assistance to Ukraine for strikes on Russian energy facilities,3,NGC,1,Ukraine/Russia,1,0,0,0,2
+20478,"Even after U.S. and Israeli strikes, Iran may still be able to build a nuclear weapon with hundreds of pounds of Iran's enriched uranium are still publicly unaccounted for.",3,NGC,1,Iran,1,0,0,0,2
+20135,BREAKING: American Cancer Society admits conventional cancer treatment causes more cancer,1,NGC,0,Medicine/Public Health,0,0,0,0,2
+20143,"Syphilis Is Killing Babies. The US is Failing to Stop the Disease From Spreading. The only drug to treat syphilis during pregnancy is in short supply. Untreated, syphilis can pass to newborns, killing them or leaving them w/ disabilities. As cases rise, the US isn’t doing much to prevent shortages.",1,NGC,1,Sexual/Gender Health,1,0,0,0,2
+20115,New: EPA Approved a Fuel Ingredient Even Though It Could Cause Cancer in Virtually Every Person Exposed Over a Lifetime. An EPA document shows that a new Chevron fuel ingredient has a lifetime cancer risk more than 1 million times higher than what the agency usually finds acceptable.,1,NGC,1,Medicine/Public Health,0,0,0,0,2
+20292,Kushner used private email account for White House business - Politico,2,NGC,1,Political Figures,1,0,0,0,2
+20121,HEALTH EXCLUSIVE: Clinic Funded By Biden Administration Distributes Crack Pipes To Addicts Outside A ‚ÄòSchool‚Äô,1,NGC,0,Medicine/Public Health,0,0,0,0,2
+20386,The U.S. is sending $8 billion worth of military aid to Israel.,3,NGC,0,Palestine/Isreal,0,0,0,0,2
+20326,Greece is one of NATO’s top defense spenders. Here’s why. ,2,NGC,1,Global Politics,0,0,0,0,2
+20088,Drug Overdoses Spike in Colorado After Legalization of Fentanyl,1,NGC,0,Drug Crisis,0,1,0,0,2
+20451,Putin: Bombed Hospital Was Really Bioweapon Storage Facility,3,NGC,0,Ukraine/Russia,0,0,0,0,2
+20266,"In 2020, “250,000 ballots were manufactured” in Georgia and “Biden was given win” by Secretary of State Brad Raffensperger",2,NGC,0,Elections,0,1,0,0,2
+20356,Zohran Mamdani says it's 'too early' to give Trump credit for Gaza ceasefire deal,3,NGC,1,Palestine/Isreal,1,1,0,0,2
+20185,Inspector general finds no FBI agents were invovled in January 6 attack,2,NGC,1,Jan 6th,1,1,0,0,2
+20301,"President Joe Biden Rescinds Medal of Freedom given to Trump's campaign manager, Bradley Birkenfeld.",2,NGC,0,Political Figures,0,0,0,0,2
+20440,BREAKING: North Korea has taken military action against Russia.,3,NGC,0,Ukraine/Russia,0,0,0,0,2
+20087,"SHOCKING REPORT: Teen Fentanyl Deaths Surge 350%, Linked to Open Borders",1,NGC,0,Drug Crisis,0,0,0,0,2
+20078,British Columbia to recriminalize use of drugs in public spaces,1,NGC,1,Drug Crisis,0,0,0,0,2
+20196,"Former President Donald Trump asked ""for troops around the Capitol"" on Jan. 6, 2021, but was ""turned down by the Democrats.""",2,NGC,0,Jan 6th,0,1,0,0,2
+20444,"Volodymyr Zelenskyy is a cousin of George Soros, Pentagon official says.",3,NGC,0,Ukraine/Russia,0,0,0,0,2
+20043,7 large observational studies found no increased risk of miscarriage or stillbirth with COVID vaccination during pregnancy. ,1,NGC,1,Vaccines,1,0,0,0,2
+20251,"Texas Democrat calls mail-in ballot fraud the ""great source of voter fraud in this state.""",2,NGC,1,Elections,1,0,0,0,2
+20393,Protesters in Kerala India accidentally bring Italian flag instead of Palestine flag to pro-Hamas protest.,3,NGC,0,Palestine/Isreal,1,0,0,0,2
+20244,Georgia House passes bill that makes it a misdemeanor to give food or water to voters waiting in line.,2,NGC,1,Elections,0,0,0,0,2

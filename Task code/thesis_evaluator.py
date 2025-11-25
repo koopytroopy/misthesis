@@ -23,7 +23,7 @@ print(f"Experiment started: {datetime.now()}")
 CONFIG = {
     "ugc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/UGC_Master_Ex.csv",
     "ngc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/NGC_Master_Ex.csv",
-    "model_name": "mistral-7b-instruct-v0.2",
+    "model_name": "mixtral-8x7b-instruct-v0.1",
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,
     "random_seeds": [42, 123, 456, 789, 999]
@@ -355,7 +355,7 @@ class ThesisEvaluator:
         # Save run results
         self.run_data_storage[f"{dataset_name}_run_{run_id}"] = df_clean
 
-        outfile = f"{dataset_name.lower()}_run_{run_id+1}_results.csv"
+        outfile = f"{dataset_name.lower()}_run_{run_id+1}_mixtral-8x7b-instruct-v0.1_results.csv"
         df_clean.to_csv(outfile, index=False)
         print(f"Saved results to {outfile}")
 
@@ -422,7 +422,7 @@ class ThesisEvaluator:
             })
 
         df_summary = pd.DataFrame(summary)
-        outfile = f"{dataset_name.lower()}_aggregated_domain_analysis_mistral-7b-instruct-v0.2.csv"
+        outfile = f"{dataset_name.lower()}_aggregated_domain_analysis_mixtral-8x7b-instruct-v0.1.csv"
         df_summary.to_csv(outfile, index=False)
         print(f"Saved aggregated domain analysis to {outfile}")
 
@@ -439,7 +439,7 @@ class ThesisEvaluator:
 
         df = pd.DataFrame(self.all_results)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        outfile = f"mistral-7b-instruct-v0.2_thesis_comprehensive_results_{timestamp}.csv"
+        outfile = f"mixtral-8x7b-instruct-v0.1_thesis_comprehensive_results_{timestamp}.csv"
         df.to_csv(outfile, index=False)
 
         print(f"Saved final comprehensive results to {outfile}")
