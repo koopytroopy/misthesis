@@ -21,7 +21,7 @@ print(f"Experiment started: {datetime.now()}")
 CONFIG = {
     "ugc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/UGC_Master_Ex.csv",
     "ngc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/NGC_Master_Ex.csv",
-    "model_name": "gemma-3-27b-it",
+    "model_name": "mistral-7b-instruct-v0.2",
     "api_url": "http://127.0.0.1:1234/v1/completions",
     "n_runs": 5,
     "random_seeds": [42, 123, 456, 789, 999],
@@ -438,12 +438,12 @@ class ThesisEvaluator:
         # Save run results
         self.run_data_storage[f"{dataset_name}_run_{run_id}"] = df_clean
 
-        outfile = f"{dataset_name.lower()}_run_{run_id+1}_results_gemma27bbFS.csv"
+        outfile = f"{dataset_name.lower()}_run_{run_id+1}_results_mistral-7b-instruct-v0.2_FS.csv"
         df_clean.to_csv(outfile, index=False)
         print(f"Saved results to {outfile}")
         
         # Save few-shot examples used
-        few_shot_outfile = f"{dataset_name.lower()}_run_{run_id+1}_fewshot_examples_gemma27bFS.csv"
+        few_shot_outfile = f"{dataset_name.lower()}_run_{run_id+1}_fewshot_examples_mistral-7b-instruct-v0.2.csv"
         few_shot_examples.to_csv(few_shot_outfile, index=False)
         print(f"Saved few-shot examples to {few_shot_outfile}")
 
@@ -567,7 +567,7 @@ class ThesisEvaluator:
             })
 
         df_summary = pd.DataFrame(summary)
-        outfile = f"{dataset_name.lower()}_domain_summary_gemma27bFS.csv"
+        outfile = f"{dataset_name.lower()}_domain_summary_mistral-7b-instruct-v0.2_FS.csv"
         df_summary.to_csv(outfile, index=False)
         print(f"Saved domain summary to {outfile}")
 
@@ -582,7 +582,7 @@ class ThesisEvaluator:
             return
 
         df_final = pd.DataFrame(self.all_results)
-        outfile = "final_aggregated_results_gemma27bFS.csv"
+        outfile = "final_aggregated_results_mistral-7b-instruct-v0.2_FS.csv"
         df_final.to_csv(outfile, index=False)
         print(f"Saved final aggregated results to {outfile}")
         return df_final
