@@ -30,8 +30,12 @@ DATA_NGC = "NGC_Master_Ex.csv"
 
 MODELS_TO_RUN = [
     "distilbert-base-uncased",
+    "distilbert-base-cased",
     "roberta-base",
     "bert-base-uncased",
+    "bert-base-cased",
+    "albert-base-v2",
+    "google/electra-base-discriminator",
 ]
 
 DOMAIN_MAP = {1: "Health", 2: "Politics", 3: "War"}
@@ -256,23 +260,39 @@ def main():
 
     print("\nLoading data...")
 
+    all_rows = []
+
     ugc = pd.read_csv(DATA_UGC)
     ngc = pd.read_csv(DATA_NGC)
 
     ugc["source"] = "UGC"
     ngc["source"] = "NGC"
 
-    # ---- Clean labels/domains ----
+    # ---- Clean labels/domains (safe version) ----
     for df in [ugc, ngc]:
+
+        # Convert label/domain to strings and normalize junk
+        df["label"] = (
+            df["label"].astype(str).str.strip()
+            .replace(["", "nan", "NaN", "None"], np.nan)
+        )
+        df["domain"] = (
+            df["domain"].astype(str).str.strip()
+            .replace(["", "nan", "NaN", "None"], np.nan)
+        )
+
+        # Drop rows with missing label or domain
+        df.dropna(subset=["label", "domain"], inplace=True)
+
+        # Now safe to convert to numeric
         df["label"] = df["label"].astype(float).astype(int)
         df["domain"] = df["domain"].astype(float).astype(int)
 
+        # Reset indices after cleaning
     ugc_only = ugc.reset_index(drop=True)
     ngc_only = ngc.reset_index(drop=True)
 
-    all_rows = []
 
-   
     # TRAIN ON UGC → TEST ON NGC
     
     print("\n=== TRAIN ON UGC → TEST ON NGC ===")
@@ -302,9 +322,9 @@ def main():
     # SAVE RESULTS
     
     results_df = pd.DataFrame(all_rows)
-    results_df.to_csv("BERT_cross_content_results.csv", index=False)
+    results_df.to_csv("8_BERT_cross_content_results.csv", index=False)
 
-    print("\nSaved BERT_cross_content_results.csv\n")
+    print("\nSaved 8_BERT_cross_content_results.csv\n")
 
    
     # PLOTS + STATISTICS
