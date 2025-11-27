@@ -1,0 +1,11 @@
+A 2 (Source: UGC, NGC) × 3 (Domain: Health, Politics, War) repeated-measures ANOVA was conducted on F1 scores to examine differences in model performance across content types and topical domains.
+
+There was a significant main effect of source, F(1, 5) = 10.30, p = 0.024, η²₍G₎ = 0.054, indicating a performance difference between UGC and NGC content.
+
+The main effect of domain was not statistically significant, F(2, 10) = 2.66, p = 0.118, η²₍G₎ = 0.011.
+
+The Source × Domain interaction was not statistically significant, F(2, 10) = 0.17, p = 0.849, η²₍G₎ = 0.001.
+
+
+
+A paired-samples t-test comparing overall F1 performance on UGC versus NGC content showed that the difference between sources was statistically significant, t(5) = -3.21, p = 0.024, Cohen’s d₍z₎ = 0.445.

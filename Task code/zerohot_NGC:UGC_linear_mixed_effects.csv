@@ -1,0 +1,13 @@
+﻿Model,dataset,condition,accuracy,f1_score
+Gemma4b,UGC,ZS,0.51,0.36
+Gemma4b,NGC,ZS,0.48,0.344
+Gemma27b,UGC,ZS,0.76,0.754
+Gemma27b,NGC,ZS,0.829,0.825
+Llama4b,UGC,ZS,0.555,0.468
+Llama4b,NGC,ZS,0.61,0.557
+Llama70b,UGC,ZS,0.666,0.619
+Llama70b,NGC,ZS,0.704,0.662
+Mistral7b,UGC,ZS,0.694,0.678
+Mistral7b,NGC,ZS,0.785,0.781
+Mixtral7b,UGC,ZS,0.654,0.608
+Mixtral7b,NGC,ZS,0.684,0.64
