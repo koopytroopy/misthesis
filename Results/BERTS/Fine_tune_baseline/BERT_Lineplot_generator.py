@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-df = pd.read_csv("2ANOVA_CxD_ZS.csv")
+df = pd.read_csv("2ANOVA_CxD_FS.csv")
 
 GARNET = "#8A1538"
 LIGHT_GREY = "#B1B1B1"
@@ -46,11 +46,11 @@ for i, model in enumerate(models):
     ax.set_title(model, fontsize=18)
     ax.set_xticks(x)
     ax.set_xticklabels(domains, rotation=15)
-    ax.set_ylim(0.0, 1.0)
+    ax.set_ylim(0.0, 0.9)
 
 # Shared big title
 fig.suptitle(
-    "Zero-shot LLM-Level Interaction Plots: Content Type × Domain",
+    "Few-shot LLM-Level Interaction Plots: Content Type × Domain",
     fontsize=26,
     fontweight="bold"
 )
