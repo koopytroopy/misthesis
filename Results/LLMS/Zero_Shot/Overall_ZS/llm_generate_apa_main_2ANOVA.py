@@ -127,10 +127,10 @@ def generate_apa(results_df):
 
     final_text = "\n".join(narrative)
 
-    with open("FS_Final_Analysis_APA_F1.txt", "w") as f:
+    with open("BERT_Final_Analysis_APA_F1.txt", "w") as f:
         f.write(final_text)
 
-    print("\nSaved to FS_Final_Analysis_APA_F1.txt\n")
+    print("\nSaved to BERT_Final_Analysis_APA_F1.txt\n")
     print(final_text)
 
 
@@ -138,5 +138,5 @@ def generate_apa(results_df):
 # RUN WITH EXISTING RESULTS CSV
 # =============================
 if __name__ == "__main__":
-    df = pd.read_csv("2ANOVA_CxD_ZS.csv")
+    df = pd.read_csv("Final_F1_results.csv")
     generate_apa(df)

@@ -3,16 +3,16 @@ import pandas as pd
 # ------------------------------------------------------------
 # LOAD RESULTS
 # ------------------------------------------------------------
-df = pd.read_csv("llama70bZS_thesis_comprehensive_results_20251124_132912.csv")
+df = pd.read_csv("Final_F1_results.csv")
 
 # Normalize UGC/NGC labels just in case
-df["dataset"] = df["dataset"].str.upper()
+df["source"] = df["source"].str.upper()
 
 # ------------------------------------------------------------
 # COMPUTE MEAN + SD FOR ACCURACY & F1
 # ------------------------------------------------------------
 metrics = (
-    df.groupby("dataset")[["accuracy", "f1_score"]]
+    df.groupby("source")[["accuracy", "f1"]]
       .agg(["mean", "std"])
       .reset_index()
 )
