@@ -1,3 +1,6 @@
+# This is the script for the zero shot eval of LLMS
+# Call on model at line 24
+# define prompt at line 38
 import pandas as pd
 import requests
 from sklearn.metrics import (
@@ -15,11 +18,6 @@ warnings.filterwarnings("ignore")
 print("Thesis Misinformation Testing")
 print(f"Experiment started: {datetime.now()}")
 
-
-# ------------------------------------------------------------
-# CONFIGURATION
-# ------------------------------------------------------------
-
 CONFIG = {
     "ugc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/UGC_Master_Ex.csv",
     "ngc_file": "/Users/vanessabelanger/Desktop/misthesis/task code/NGC_Master_Ex.csv",
@@ -28,21 +26,12 @@ CONFIG = {
     "n_runs": 5,
     "random_seeds": [42, 123, 456, 789, 999]
 }
-
-
-# ------------------------------------------------------------
-# MAIN EVALUATOR CLASS
-# ------------------------------------------------------------
-
 class ThesisEvaluator:
     def __init__(self, config):
         self.config = config
         self.all_results = []
         self.run_data_storage = {}
 
-    # --------------------------------------------------------
-    # PROMPT BUILDER
-    # --------------------------------------------------------
 
     def generate_prompt(self, claim, domain):
         return (
@@ -50,10 +39,6 @@ class ThesisEvaluator:
             f"Respond with only one word (true/false).\n\n"
             f"Claim: \"{claim}\"\nAnswer:"
         )
-
-    # --------------------------------------------------------
-    # ZERO-SHOT CLASSIFIER (LLM CALL)
-    # --------------------------------------------------------
 
     def classify_claim(self, claim, domain, run_id=0):
         if pd.isna(claim) or not isinstance(claim, str):
@@ -116,9 +101,6 @@ class ThesisEvaluator:
         except:
             return None
 
-    # --------------------------------------------------------
-    # DATA SPLITTING (STRATIFIED BY DOMAIN + LABEL)
-    # --------------------------------------------------------
 
     def create_stratified_split(self, df, test_size=0.3, random_state=42):
         from sklearn.model_selection import train_test_split
@@ -148,9 +130,6 @@ class ThesisEvaluator:
 
         return train_df, test_df
 
-    # --------------------------------------------------------
-    # BASELINES
-    # --------------------------------------------------------
 
     def generate_baseline_predictions(self, train_df, test_df, method="random"):
         np.random.seed(42)
@@ -197,9 +176,6 @@ class ThesisEvaluator:
         else:
             raise ValueError(f"Unknown baseline: {method}")
 
-    # --------------------------------------------------------
-    # METRICS PRINTING
-    # --------------------------------------------------------
 
     def print_overall_results(self, df_clean, label):
         acc = accuracy_score(df_clean["label"], df_clean["prediction"])
@@ -216,10 +192,6 @@ class ThesisEvaluator:
         print(confusion_matrix(df_clean["label"], df_clean["prediction"]))
         print(f"Cohen’s Kappa: {cohen_kappa_score(df_clean['label'], df_clean['prediction']):.2f}")
         print(f"MCC: {matthews_corrcoef(df_clean['label'], df_clean['prediction']):.2f}")
-
-    # --------------------------------------------------------
-    # DOMAIN-SPECIFIC METRICS
-    # --------------------------------------------------------
 
     def print_domain_results(self, df_clean, label):
         print(f"\nDomain-Specific Results for {label}:")
@@ -244,9 +216,6 @@ class ThesisEvaluator:
             print(f"F1-Score: {f1:.2f}")
             print(confusion_matrix(subset["label"], subset["prediction"]))
 
-    # --------------------------------------------------------
-    # FULL METRICS OBJECT (FOR CSV)
-    # --------------------------------------------------------
 
     def calculate_comprehensive_metrics(self, y_true, y_pred, dataset_name, condition, run_id):
         mask = ~(pd.isna(y_true) | pd.isna(y_pred))
@@ -284,9 +253,6 @@ class ThesisEvaluator:
             "confusion_matrix": confusion_matrix(y_true, y_pred).tolist()
         }
 
-    # --------------------------------------------------------
-    # RUN ONE EXPERIMENT (UGC or NGC for 1 RUN)
-    # --------------------------------------------------------
 
     def run_single_experiment(self, df, dataset_name, run_id):
         print("\n" + "="*60)
@@ -309,33 +275,27 @@ class ThesisEvaluator:
             predictions.append(pred)
             sleep(0.1)
 
-        # Baselines
         random_baseline = self.generate_baseline_predictions(train_df, test_df, "random")
         majority_baseline = self.generate_baseline_predictions(train_df, test_df, "majority")
         tfidf_baseline = self.generate_baseline_predictions(train_df, test_df, "tfidf_lr")
-
         results_df = test_df.copy()
         results_df["prediction"] = predictions
         results_df["random_baseline"] = random_baseline
         results_df["majority_baseline"] = majority_baseline
         results_df["tfidf_baseline"] = tfidf_baseline
         results_df["run_id"] = run_id
-
         df_clean = results_df.dropna(subset=["prediction"])
-
         print(f"Successfully classified {len(df_clean)}/{len(results_df)} claims")
-
         self.print_overall_results(df_clean, f"{dataset_name} Run {run_id+1}")
         self.print_domain_results(df_clean, f"{dataset_name} Run {run_id+1}")
 
-        # Store metrics
+
         model_metrics = self.calculate_comprehensive_metrics(
             df_clean["label"], df_clean["prediction"], dataset_name, "Model", run_id
         )
         if model_metrics:
             self.all_results.append(model_metrics)
 
-        # Store baselines only for run 0 (clean comparison)
         if run_id == 0:
             for base_name, base_preds in [
                 ("Random", random_baseline),
@@ -361,9 +321,6 @@ class ThesisEvaluator:
 
         return df_clean
 
-    # --------------------------------------------------------
-    # STATISTICAL ANALYSIS ACROSS RUNS
-    # --------------------------------------------------------
 
     def perform_statistical_analysis(self, dataset_name):
         print("\n" + "="*60)
@@ -385,9 +342,6 @@ class ThesisEvaluator:
         print(f"\nMean Accuracy: {np.mean(accuracies):.3f} ± {np.std(accuracies):.3f}")
         print(f"Mean F1-Score: {np.mean(f1s):.3f} ± {np.std(f1s):.3f}")
 
-    # --------------------------------------------------------
-    # AGGREGATED DOMAIN ANALYSIS
-    # --------------------------------------------------------
 
     def generate_aggregated_domain_analysis(self, dataset_name):
         print("\n" + "="*60)
@@ -428,10 +382,6 @@ class ThesisEvaluator:
 
         return summary
 
-    # --------------------------------------------------------
-    # FINAL REPORT (MAIN CSV OUTPUT)
-    # --------------------------------------------------------
-
     def generate_final_report(self):
         print("\n" + "="*60)
         print("FINAL THESIS RESULTS SUMMARY")
@@ -445,9 +395,6 @@ class ThesisEvaluator:
         print(f"Saved final comprehensive results to {outfile}")
         return df
 
-    # --------------------------------------------------------
-    # CLEAN DATASETS
-    # --------------------------------------------------------
 
     def clean_datasets(self):
         print("\nCleaning datasets...")
@@ -465,10 +412,6 @@ class ThesisEvaluator:
         print(f"NGC rows: {len(ngc)}")
 
         return ugc, ngc
-
-    # --------------------------------------------------------
-    # MAIN RUN CONTROLLER
-    # --------------------------------------------------------
 
     def run_complete_evaluation(self):
         try:
@@ -506,10 +449,6 @@ class ThesisEvaluator:
             import traceback
             traceback.print_exc()
 
-
-# ------------------------------------------------------------
-# MAIN EXECUTION
-# ------------------------------------------------------------
 
 if __name__ == "__main__":
     evaluator = ThesisEvaluator(CONFIG)
