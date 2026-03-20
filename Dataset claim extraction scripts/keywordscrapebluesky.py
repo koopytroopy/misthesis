@@ -5,17 +5,15 @@ import os
 # File path 
 bluesky_path = "/Users/macbook/Desktop/Thesis_Work/claims_with_verifiable_label.csv"
 
-# Check file exists
 if not os.path.exists(bluesky_path):
     raise FileNotFoundError(f"⚠️ File not found: {bluesky_path}")
 print("✅ File found, loading Bluesky data...")
 
-# --- Load dataset ---
 bluesky_df = pd.read_csv(bluesky_path)
 print(f"Bluesky shape: {bluesky_df.shape}")
 print(f"Columns: {list(bluesky_df.columns)}")
 
-# --- Define keyword bundles (designed to capture both true AND false claims) ---
+# Define keyword bundles
 bluesky_keywords = {
     "COVID-19": [
         "covid", "coronavirus", "pandemic", "long covid", "covid deaths",
@@ -97,16 +95,14 @@ filtered_bluesky = {}
 
 for domain, words in bluesky_keywords.items():
     subset = filter_claims(bluesky_df, text_col, words)
-    # Add Domain column (will overwrite existing 'domain' if present)
     subset = subset.copy()
-    subset["Topic_Category"] = domain  # Use different name to avoid conflict with existing 'domain' column
+    subset["Topic_Category"] = domain  
     print(f"{domain}: {len(subset)} claims found")
     filtered_bluesky[domain] = subset
 
 # Combine and export
 combined = pd.concat(filtered_bluesky.values(), ignore_index=True)
-
 output_path = "/Users/macbook/Desktop/Thesis_Work/filtered_blusky_claims.xlsx"
 combined.to_excel(output_path, index=False)
 
-print(f"✅ Done! Filtered and labeled results saved to:\n{output_path}")
+print(f" Done! Filtered and labeled results saved to:\n{output_path}")

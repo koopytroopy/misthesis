@@ -55,4 +55,4 @@ df["verifiable_label"] = labels
 
 # Save new CSV
 df.to_csv(OUTPUT_PATH, index=False)
-print(f"\n✅ Done! Saved labeled dataset to:\n{OUTPUT_PATH}")
+print(f"\n Done! Saved labeled dataset to:\n{OUTPUT_PATH}")

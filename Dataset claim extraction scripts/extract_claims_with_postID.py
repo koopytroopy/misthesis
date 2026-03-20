@@ -7,7 +7,7 @@ import csv
 # 1. Set up the folder path 
 folder_path = "/Users/macbook/Desktop/Thesis_Work/sm_dataset" # change depending on computer
 
-# 2. Collect English skeeets (filename + post_id + text) ----
+# 2. Collect English skeeets (filename + post_id + text) 
 all_tweets = []
 
 for filename in os.listdir(folder_path):
@@ -30,13 +30,13 @@ for filename in os.listdir(folder_path):
                         })
 
                 except json.JSONDecodeError:
-                    print(f"⚠️ Skipping invalid line in {filename}")
+                    print(f"Skipping invalid line in {filename}")
                 except Exception as e:
-                    print(f"⚠️ Error processing line in {filename}: {e}")
+                    print(f"Error processing line in {filename}: {e}")
 
-print(f"✅ Loaded {len(all_tweets)} English tweets from all files.")
+print(f" Loaded {len(all_tweets)} English tweets from all files.")
 
-# 3. Simple lightweight rule for 'claim-like' statements
+# 3. rule for 'claim-like' statements
 def is_claim_like(text):
     text_lower = text.lower()
     if any(x in text_lower for x in [
@@ -46,16 +46,14 @@ def is_claim_like(text):
     if re.search(r"\b(is|are|was|were|has|have|had|will|can|should|must)\b", text_lower):
         return True
     return False
-
-# 4. Filter only english skeets that sound factual ----
 claims = [
     tweet for tweet in all_tweets
     if is_claim_like(tweet["text"])
 ]
 
-print(f"💬 Found {len(claims)} potential factual claims (English only).")
+print(f"Found {len(claims)} potential factual claims (English only).")
 
-# 5. Save all claim-like skeets to CSV (filename + post_id + text) ----
+# 4. Save all claim-like skeets to CSV 
 output_file = os.path.join(folder_path, "potential_claims_english_with_IDandTrace.csv")
 
 with open(output_file, "w", encoding="utf-8", newline="") as csvfile:
@@ -63,4 +61,4 @@ with open(output_file, "w", encoding="utf-8", newline="") as csvfile:
     writer.writeheader()
     writer.writerows(claims)
 
-print(f"📝 Saved English claim-like skeets (with file info) to: {output_file}")
+print(f"Saved English claim-like skeets ith file to: {output_file}")
