@@ -10,7 +10,7 @@ This project draws on previous literature and LLM instruction cards to inform th
 
 Key design components—including prompt construction, train–test splits, parameter settings (e.g., temperature, token limits), and library selection—were guided by my own research on established methodological standards in the fake-news detection research.
 
-While I have intermediate knowledge of the Python programming language, and developed an understanding of the scripts used throughout this project, all ML/DL scripts were created with the assistance of an AI-based coding tool (Claude). More specifically, I used Claude to help debug coding errors that I could not resolve independently, and to provide suggestions and validation to ensure each script aligned with my stated research objectives and desired experimental design.
+While I have intermediate knowledge of the Python programming language, and developed an understanding of the scripts used throughout this project, all ML scripts were created with the assistance of an AI-based coding tool (Claude). More specifically, I used Claude to help debug coding errors that I could not resolve independently, and to provide suggestions and validation to ensure each script aligned with my stated research objectives and desired experimental design.
 
 # Repository Folders: 
 
