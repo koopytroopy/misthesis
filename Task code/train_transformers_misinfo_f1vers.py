@@ -1,6 +1,8 @@
-# ==========================================
-# Finetuned BERT Baselines – GLMM Ready
-# ==========================================
+
+# This is the script for few-shot BERT evaluation
+# Modified from original to save item level predictions in a single CSV for GLMM
+# Call on model at line 28
+
 
 import os
 import glob
@@ -19,9 +21,6 @@ from sklearn.model_selection import train_test_split
 
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
-# ------------------------
-# Configuration
-# ------------------------
 
 DATA_UGC = "UGC_Master_Ex.csv"
 DATA_NGC = "NGC_Master_Ex.csv"
@@ -40,10 +39,6 @@ LR = 2e-5
 EPOCHS = 3
 
 DESCRIPTIVE_RESULTS = []
-
-# ------------------------
-# Dataset Class
-# ------------------------
 
 class MisinformationDataset(Dataset):
     def __init__(self, df, tokenizer):
@@ -68,9 +63,6 @@ class MisinformationDataset(Dataset):
             "labels": torch.tensor(self.labels[idx], dtype=torch.long)
         }
 
-# ------------------------
-# Training + Prediction
-# ------------------------
 
 def train_and_predict(model_name, train_df, test_df):
 
@@ -106,9 +98,6 @@ def train_and_predict(model_name, train_df, test_df):
 
     trainer.train()
 
-    # ------------------------
-    # Item-level predictions
-    # ------------------------
 
     pred_output = trainer.predict(test_ds)
     preds = np.argmax(pred_output.predictions, axis=1)
@@ -128,9 +117,6 @@ def train_and_predict(model_name, train_df, test_df):
     compute_descriptives(model_name, item_df)
 
 
-# ------------------------
-# Descriptive Metrics
-# ------------------------
 
 def compute_descriptives(model_name, df):
 
@@ -174,10 +160,6 @@ def compute_descriptives(model_name, df):
             })
 
 
-# ------------------------
-# Main Pipeline
-# ------------------------
-
 def main():
 
     print("Loading and cleaning data...")
@@ -190,23 +172,14 @@ def main():
 
     df = pd.concat([ugc, ngc], ignore_index=True)
 
-    # ------------------------
-    # Clean Labels
-    # ------------------------
-
     df["label"] = pd.to_numeric(df["label"], errors="coerce")
     df = df[df["label"].isin([0, 1])]
     df["label"] = df["label"].astype(int)
-
-    # ------------------------
-    # Clean Domains
-    # ------------------------
 
     df["domain"] = pd.to_numeric(df["domain"], errors="coerce")
     df = df[df["domain"].isin([1, 2, 3])]
     df["domain"] = df["domain"].astype(int)
 
-    # Stable item ID for GLMM
     df["item_id"] = df.index
 
     print("\nDataset summary:")
@@ -214,9 +187,6 @@ def main():
     print("Domain counts:\n", df["domain"].value_counts())
     print("Label counts:\n", df["label"].value_counts())
 
-    # ------------------------
-    # Stable Stratified Split
-    # ------------------------
 
     df["strat_key"] = (
         df["source"].astype(str) + "_" +
@@ -236,16 +206,11 @@ def main():
 
     print("\nTrain/Test sizes:", len(train_df), len(test_df))
 
-    # ------------------------
-    # Train Models
-    # ------------------------
 
     for model in MODELS_TO_RUN:
         train_and_predict(model, train_df, test_df)
 
-    # ------------------------
-    # Combine Item-Level Files
-    # ------------------------
+
 
     print("\nCombining item-level files...")
 
@@ -255,9 +220,6 @@ def main():
     master.to_csv("BERT_item_level_master.csv", index=False)
     print("Saved → BERT_item_level_master.csv")
 
-    # ------------------------
-    # Save Descriptive Metrics
-    # ------------------------
 
     desc_df = pd.DataFrame(DESCRIPTIVE_RESULTS)
     desc_df.to_csv("BERT_descriptive_metrics.csv", index=False)
