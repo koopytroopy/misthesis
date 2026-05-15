@@ -6,8 +6,8 @@ import os
 bluesky_path = "/Users/macbook/Desktop/Thesis_Work/claims_with_verifiable_label.csv"
 
 if not os.path.exists(bluesky_path):
-    raise FileNotFoundError(f"⚠️ File not found: {bluesky_path}")
-print("✅ File found, loading Bluesky data...")
+    raise FileNotFoundError(f"File not found: {bluesky_path}")
+print("File found, loading Bluesky data...")
 
 bluesky_df = pd.read_csv(bluesky_path)
 print(f"Bluesky shape: {bluesky_df.shape}")
